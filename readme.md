@@ -3,7 +3,7 @@
 [C++ MSYS2/Mingw-w64 for VSCode](https://www.youtube.com/watch?v=OwQobefF-iE)
 
 [Youtube link](https://www.youtube.com/watch?v=rZE700aaT5I)
-<video src="resources_readme/SFML_SETUP.mp4" width="320" height="240" controls></video>
+<video src="resources_readme/SFML_SETUP.mp4" width="320" height="240"></video>
 ## Introduction
 A brief description of what the project is about.
 
