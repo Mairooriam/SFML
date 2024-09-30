@@ -1,9 +1,10 @@
 # SFML Muistiinpanemiset
 ## project setup
+
 [C++ MSYS2/Mingw-w64 for VSCode](https://www.youtube.com/watch?v=OwQobefF-iE)
 
+[SFML setupd for VSCode](https://www.youtube.com/watch?v=rZE700aaT5I)
 
-[![SFML setupd for VSCode](https://img.youtube.com/vi/video-id/0.jpg)](https://www.youtube.com/watch?v=rZE700aaT5I)
 ## Introduction
 A brief description of what the project is about.
 
