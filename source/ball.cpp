@@ -1,47 +1,41 @@
-#include "ball.h"
-Ball::Ball(float radius, sf::Vector3f position, sf::Vector2f initialVelocity)
-{
-    this-> velocity = initialVelocity;
-    this->radius = radius;
-    this->position = position;
+#include "Ball.h"
+#include "physics.h"
+#include <iostream>
+#include "vectorOperators.h"
+Ball::Ball(float radius, const sf::Vector3f& position, const sf::Vector3f& velocity)
+    : velocity(velocity), GRAVITY(0.f, 9.81f, 0.f), position(position){
+    shape.setRadius(radius);
+    shape.setPosition(position.x, position.y);
+    shape.setFillColor(sf::Color::Green);
 }
 
-float Ball::getRadius() const
-{
-    return radius;
-}
-
-void Ball::setRadius(float radius)
-{
-    this->radius = radius;
-}
-
-sf::Vector3f Ball::getPosition() const
-{
-    return this->position;
-}
-
-void Ball::setPosition(float x, float y, float z)
-{
-    this->position.x = x;
-    this->position.y = y;
-    this->position.z = z;
-}
-
-sf::Vector2f Ball::getVelocity() const
-{
-    return this->velocity;
-}
-void Ball::setVelocity(const sf::Vector2f &velocity)
-{
+void Ball::setVelocity(const sf::Vector3f& velocity) {
     this->velocity = velocity;
 }
 
+sf::Vector3f Ball::getVelocity() const {
+    return this->velocity;
+}
 
+void Ball::move(sf::Vector3f position) {
+    shape.move(position.x, position.y);
+}
 
-void Ball::draw(sf::RenderWindow &window)
-{
-    sf::CircleShape shape(radius);
-    shape.setPosition(position.x, position.y);
+void Ball::draw(sf::RenderWindow& window) {
     window.draw(shape);
 }
+
+void Ball::update(float deltaTime) {
+
+
+    position = kinematicEquation(GRAVITY, velocity, deltaTime, position);
+    std::cout << "Vector " << position << std::endl;
+    //std::cout << deltaTime << deltaTime << "\n";
+    
+    if(position.y > 600){
+        position.y = 0;
+        
+    }
+    shape.move(position.x, position.y);
+}
+

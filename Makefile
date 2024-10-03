@@ -7,8 +7,10 @@ all: compile link
 compile:
 	g++ -g -c main.cpp -I"$(SFMLDir)/include" -I"$(ProjectDir)/include" -DSFML_STATIC 
 	g++ -g -c source/ball.cpp -I"$(SFMLDir)/include" -I"$(ProjectDir)/include" -DSFML_STATIC
-
+	g++ -g -c source/physics.cpp -I"$(SFMLDir)/include" -I"$(ProjectDir)/include" -DSFML_STATIC
+	g++ -g -c source/game.cpp -I"$(SFMLDir)/include" -I"$(ProjectDir)/include" -DSFML_STATIC
+	g++ -g -c source/vectorOperators.cpp -I"$(SFMLDir)/include" -I"$(ProjectDir)/include" -DSFML_STATIC
 link:
-	g++ main.o ball.o -o main -L"$(SFMLDir)/lib" -L"$(OpenALDir)/lib" -lsfml-graphics-s -lsfml-window-s -lsfml-audio-s -lsfml-system-s -lopengl32 -lfreetype -lwinmm -lgdi32 -mconsole -lsfml-main -lflac -lvorbisenc -lvorbisfile -lvorbis -logg -lOpenAL32 -static-libgcc -static-libstdc++ -static
+	g++ main.o ball.o physics.o game.o vectorOperators.o -o main -L"$(SFMLDir)/lib" -L"$(OpenALDir)/lib" -lsfml-graphics-s -lsfml-window-s -lsfml-audio-s -lsfml-system-s -lopengl32 -lfreetype -lwinmm -lgdi32 -mconsole -lsfml-main -lflac -lvorbisenc -lvorbisfile -lvorbis -logg -lOpenAL32 -static-libgcc -static-libstdc++ -static
 clean:
 	rm -f main *.o

@@ -5,25 +5,22 @@
 
 class Ball {
 public:
-    Ball(float radius, sf::Vector3f position, sf::Vector2f initialVelocity);
+    Ball(float radius, const sf::Vector3f& position, const sf::Vector3f& velocity = sf::Vector3f(0.f, 0.f, 0.f));
 
-    float getRadius() const;
-    void setRadius(float radius);
-
-    sf::Vector3f getPosition() const;
-    void setPosition(float x, float y,float z);
-    sf::Vector2f getVelocity() const;
-    void setVelocity(const sf::Vector2f& velocity);
-
-    void move(float dx, float dy);
+    void setVelocity(const sf::Vector3f& velocity);
+    sf::Vector3f getVelocity() const;
+    
+    void move(sf::Vector3f position);
     void draw(sf::RenderWindow& window);
+    void update(float deltaTime);
 
-
-private:
-    sf::Vector2f velocity;
     sf::Vector3f position;
-    float radius;
-
+    sf::Vector3f velocity;
+    const sf::Vector3f GRAVITY;
+private:
+    sf::CircleShape shape;
+    
+    
 };
 
 #endif // BALL_H
