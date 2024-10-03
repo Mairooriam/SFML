@@ -25,17 +25,20 @@ void Ball::draw(sf::RenderWindow& window) {
     window.draw(shape);
 }
 
-void Ball::update(float deltaTime) {
+bool Ball::update(float deltaTime) {
 
 
     position = kinematicEquation(GRAVITY, velocity, deltaTime, position);
     std::cout << "Vector " << position << std::endl;
-    //std::cout << deltaTime << deltaTime << "\n";
+    std::cout << "velocity" << velocity<< "\n";
     
     if(position.y > 600){
         position.y = 0;
-        
+        shape.move(position.x, position.y);
+        return false;
     }
     shape.move(position.x, position.y);
+    return true;
+
 }
 

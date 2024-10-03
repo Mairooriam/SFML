@@ -30,7 +30,7 @@ void Game::run() {
         while (timeSinceLastUpdate > TimePerFrame) {
             timeSinceLastUpdate -= TimePerFrame;
             processEvents();
-            update(timeSinceLastUpdate);
+            update(totalElapsedTime);
         }
 
         render();
@@ -47,7 +47,9 @@ void Game::processEvents() {
 
 void Game::update(sf::Time totalElapsedTime) {
     for (auto& ball : balls) {
-        ball.update(totalElapsedTime.asSeconds());
+        if(!ball.update(totalElapsedTime.asSeconds())){
+            totalElapsedTime = sf::seconds(0);
+        };
     }
 }
 

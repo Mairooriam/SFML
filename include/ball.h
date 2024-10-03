@@ -12,7 +12,7 @@ public:
     
     void move(sf::Vector3f position);
     void draw(sf::RenderWindow& window);
-    void update(float deltaTime);
+    bool update(float deltaTime);
 
     sf::Vector3f position;
     sf::Vector3f velocity;
