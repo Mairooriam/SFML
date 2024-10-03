@@ -34,10 +34,10 @@ bool Ball::update(float deltaTime) {
     
     if(position.y > 600){
         position.y = 0;
-        shape.move(position.x, position.y);
+        shape.setPosition(position.x, position.y);
         return false;
     }
-    shape.move(position.x, position.y);
+    shape.setPosition(position.x, position.y);
     return true;
 
 }

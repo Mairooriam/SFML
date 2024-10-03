@@ -8,13 +8,13 @@ Game::Game()
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
 
-    for (size_t offset = 0; offset < 5; offset++) {
+    for (size_t offset = 0; offset < 1; offset++) {
         balls.emplace_back(50, position, initialVelocity);
     }
 
     
     // Instead of setting the size, use zoom to zoom out
-    view.zoom(10.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
+    view.zoom(1.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
     window.setView(view);
 }
 
@@ -30,7 +30,7 @@ void Game::run() {
         while (timeSinceLastUpdate > TimePerFrame) {
             timeSinceLastUpdate -= TimePerFrame;
             processEvents();
-            update(TimePerFrame);
+            update(totalElapsedTime);
         }
 
         render();
