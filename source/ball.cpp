@@ -1,9 +1,9 @@
 #include "ball.h"
-Ball::Ball(float radius, float x, float y)
+Ball::Ball(float radius, sf::Vector3f position, sf::Vector2f initialVelocity)
 {
+    this-> velocity = initialVelocity;
     this->radius = radius;
-    this->x = x;
-    this->y = y;
+    this->position = position;
 }
 
 float Ball::getRadius() const
@@ -16,34 +16,32 @@ void Ball::setRadius(float radius)
     this->radius = radius;
 }
 
-float Ball::getX() const
+sf::Vector3f Ball::getPosition() const
 {
-    return x;
+    return this->position;
 }
 
-float Ball::getY() const
+void Ball::setPosition(float x, float y, float z)
 {
-    return y;
+    this->position.x = x;
+    this->position.y = y;
+    this->position.z = z;
 }
 
-void Ball::setY(float y)
+sf::Vector2f Ball::getVelocity() const
 {
-    this->y = y;
+    return this->velocity;
 }
-void Ball::setX(float x)
+void Ball::setVelocity(const sf::Vector2f &velocity)
 {
-    this->x = x;
+    this->velocity = velocity;
 }
 
-void Ball::move(float dx, float dy)
-{
-    setX(dx);
-    setY(dy); 
-}
+
 
 void Ball::draw(sf::RenderWindow &window)
 {
     sf::CircleShape shape(radius);
-    shape.setPosition(x, y);
+    shape.setPosition(position.x, position.y);
     window.draw(shape);
 }

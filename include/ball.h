@@ -5,24 +5,25 @@
 
 class Ball {
 public:
-    Ball(float radius, float x, float y);
+    Ball(float radius, sf::Vector3f position, sf::Vector2f initialVelocity);
 
     float getRadius() const;
     void setRadius(float radius);
 
-    float getX() const;
-    void setX(float x);
-
-    float getY() const;
-    void setY(float y);
+    sf::Vector3f getPosition() const;
+    void setPosition(float x, float y,float z);
+    sf::Vector2f getVelocity() const;
+    void setVelocity(const sf::Vector2f& velocity);
 
     void move(float dx, float dy);
     void draw(sf::RenderWindow& window);
 
+
 private:
+    sf::Vector2f velocity;
+    sf::Vector3f position;
     float radius;
-    float x;
-    float y;
+
 };
 
 #endif // BALL_H
