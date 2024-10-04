@@ -30,3 +30,8 @@ std::ostream& operator<<(std::ostream& os, const sf::Vector3f& vector) {
     os << "(" << vector.x << ", " << vector.y << ", " << vector.z << ")";
     return os;
 }
+
+std::ostream& operator<<(std::ostream& os, const sf::Vector2f& vector) {
+    os << "(" << vector.x << ", " << vector.y << ", " << ")";
+    return os;
+}

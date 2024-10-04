@@ -12,5 +12,6 @@ sf::Vector3f operator*(const sf::Vector3f& vector, float scalar);
 sf::Vector3f operator*(float scalar, const sf::Vector3f& vector);
 sf::Vector3f operator*(const sf::Vector3f& lhs, const sf::Vector3f& rhs);
 std::ostream& operator<<(std::ostream& os, const sf::Vector3f& vector);
+std::ostream& operator<<(std::ostream& os, const sf::Vector2f& vector);
 
 #endif // VECTOR_OPERATORS_H

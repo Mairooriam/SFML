@@ -29,8 +29,8 @@ bool Ball::update(float deltaTime) {
 
 
     position = kinematicEquation(GRAVITY, velocity, deltaTime, position);
-    std::cout << "Vector " << position << std::endl;
-    std::cout << "velocity" << velocity<< "\n";
+    //std::cout << "Vector " << position << std::endl;
+    //std::cout << "velocity" << velocity<< "\n";
     
     if(position.y > 600){
         position.y = 0;
