@@ -5,6 +5,7 @@
 #include <vector>
 #include "Ball.h"
 #include <SFML/Window/Mouse.hpp>
+#include "debugOverlay.h"
 class Game {
 public:
     Game();
@@ -12,7 +13,7 @@ public:
     sf::RenderWindow window;
     sf::Mouse mouse;
     sf::Text text;
-    
+    DebugOverlay debugOverlay;
 private:
     void processEvents();
     void update(sf::Time totalElapsedTime);

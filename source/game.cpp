@@ -5,14 +5,15 @@
 Game::Game()
     : window(sf::VideoMode(800, 600), "SFML Window with Shape"),
       view(sf::FloatRect(0, 0, 800, 600)) {
-    const sf::Vector3f initialVelocity(1.0f, 0.0f, 0.0f);
+    const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
 
     for (size_t offset = 0; offset < 1; offset++) {
         balls.emplace_back(5, position, initialVelocity);
     }
 
-    
+    debugOverlay.addTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
+    debugOverlay.addTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
     // Instead of setting the size, use zoom to zoom out
     view.zoom(1.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
     window.setView(view);
@@ -43,19 +44,15 @@ void Game::processEvents() {
         if (event.type == sf::Event::Closed)
             window.close();
         if (event.type == sf::Event::MouseButtonReleased){
-            sf::Vector2 position = sf::Mouse::getPosition();
-            //std::cout << "clieck at X:" << position.x << "Y:" << position.y << "\n";
-            sf::Vector2f mousepos(position.x,position.y);
-            std::cout << "mosuepos:" << mousepos<< "\n";
-            sf::FloatRect textrect = text.getGlobalBounds();
-            // if (text.getGlobalBounds().contains(mousepos)){
-            //      std::printf("MOUSE HIT TEXT");
-            // }
+            sf::Vector2i position = mouse.getPosition();
+            std::cout << "clieck at X:" << position.x << "Y:" << position.y << "\n";
         }
     }
 }
 
 void Game::update(sf::Time totalElapsedTime) {
+    debugOverlay.updateTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
+    debugOverlay.updateTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
     for (auto& ball : balls) {
         if(!ball.update(totalElapsedTime.asSeconds())){
             totalElapsedTime = sf::seconds(0);
@@ -65,25 +62,12 @@ void Game::update(sf::Time totalElapsedTime) {
 
 void Game::render() {
     window.clear();
-     // Declare and load a font
-    sf::Font font;
-    font.loadFromFile("resources/arial.ttf");
-    text.setFont(font);
-    text.setString("HELOOOOO");
-    // Create a text
-    
-    text.setCharacterSize(100);
-    text.setStyle(sf::Text::Bold);
-    text.setFillColor(sf::Color::Red);
-    //sf::Rect textrect = text.getGlobalBounds();
 
-    //std::cout << "left: " << textrect.left << "top: "<< textrect.top  << "textect sode X:" << textrect.getSize().x <<"textect sode Y:" << textrect.getSize().y <<"\n";
-    window.draw(text);
-    
 
     
     for (auto& ball : balls) {
         ball.draw(window);
     }
+    debugOverlay.draw(window);
     window.display();
 }

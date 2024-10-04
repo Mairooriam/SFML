@@ -56,6 +56,10 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "deque": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "functional": "cpp",
+        "list": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp"
     }
 }
