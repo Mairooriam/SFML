@@ -5,7 +5,7 @@
 
 class Ball {
 public:
-    Ball(float radius, const sf::Vector3f& position, const sf::Vector3f& velocity,const float mass);
+    Ball(float radius, const sf::Vector3f& position, const sf::Vector3f& velocity);
 
     void setVelocity(const sf::Vector3f& velocity);
     sf::Vector3f getVelocity() const;

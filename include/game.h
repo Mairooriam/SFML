@@ -6,14 +6,16 @@
 #include "Ball.h"
 #include <SFML/Window/Mouse.hpp>
 #include "debugOverlay.h"
+#include "uiElements.h"
 class Game {
 public:
     Game();
     void run();
     sf::RenderWindow window;
-    sf::Mouse mouse;
+    sf::Vector2i mousePos;
     sf::Text text;
     DebugOverlay debugOverlay;
+    std::vector<Button> buttons;
 private:
     void processEvents();
     void update(sf::Time totalElapsedTime);
@@ -23,6 +25,7 @@ private:
     std::vector<Ball> balls;
     sf::Time totalElapsedTime;
     sf::View view;
+    sf::Font font;
 };
 
 #endif // GAME_H
