@@ -67,11 +67,9 @@ void Game::processEvents() {
            
             std::cout << "clieck at X:" << mousePos.x << "Y:" << mousePos.y << "\n";
         }
-        // Pass the event to each button
-        // for (auto& button : buttons) {
-        //     button.handleEvent(event);
-           
-        // }
+        if(buttons[0].buttonState == 1){
+            std::cout << "BUTTOM PRESSED" << "\n";
+        }
     }
 }
 
@@ -91,6 +89,11 @@ void Game::update(sf::Time totalElapsedTime) {
         //testing waka code time
 
         // TESTING WAKA CODE TIME
+
+        // TESONTG WEAKA
+
+        // WAKA TESTING
+        
     }
 
 }

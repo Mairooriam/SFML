@@ -7,7 +7,7 @@
 #include <iostream>
 class UIElement : public sf::Drawable, public sf::Transformable {
 public:
-    virtual void handleEvent(const sf::Event& event) = 0;
+    //virtual void handleEvent(const sf::Event& event) = 0;
     //virtual void update(float dt) = 0;
 };
 
@@ -47,14 +47,15 @@ public:
     Button(float x, float y, float width, float height, sf::Font* font, const std::string text, 
     sf::Color idleColor,sf::Color hoverColor,sf::Color activeColor);
     
-    void handleEvent(const sf::Event& event) override;
+    int handleEvent(const sf::Event& event);
     void update(const sf::Vector2i& mousePos);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
 
     sf::RectangleShape button;
-private:
     short unsigned buttonState;
+private:
+    
 
     sf::Font* font;
     sf::Text buttonText;
@@ -68,7 +69,7 @@ private:
 class Label : public UIElement {
 public:
     Label(const std::string& text);
-    void handleEvent(const sf::Event& event) override;
+    //void handleEvent(const sf::Event& event) override;
     //void update(float dt) override;
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
