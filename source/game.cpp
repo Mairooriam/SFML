@@ -87,6 +87,7 @@ void Game::update(sf::Time totalElapsedTime) {
 
     for (auto& button : buttons){
          button.update(mousePos);
+        // testing code time 
     }
 
 }
