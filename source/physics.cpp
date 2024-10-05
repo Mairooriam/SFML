@@ -11,5 +11,3 @@ sf::Vector3f kinematicEquation(sf::Vector3f acceleration, sf::Vector3f velocity,
     sf::Vector3f result = firstpart + secondpart + position;
     return  result;
 }
-
-

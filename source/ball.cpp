@@ -2,8 +2,8 @@
 #include "physics.h"
 #include <iostream>
 #include "vectorOperators.h"
-Ball::Ball(float radius, const sf::Vector3f& position, const sf::Vector3f& velocity)
-    : velocity(velocity), GRAVITY(0.f, 9.81f, 0.f), position(position){
+Ball::Ball(float radius, const sf::Vector3f& position, const sf::Vector3f& velocity, float mass)
+    : velocity(velocity), GRAVITY(0.f, 9.81f, 0.f), position(position), mass(mass){
     shape.setRadius(radius);
     shape.setPosition(position.x, position.y);
     shape.setFillColor(sf::Color::Green);
