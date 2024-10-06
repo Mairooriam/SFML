@@ -20,6 +20,7 @@ private:
     void processEvents();
     void update(sf::Time totalElapsedTime);
     void render();
+    void initButtons();
 
     
     std::vector<Ball> balls;

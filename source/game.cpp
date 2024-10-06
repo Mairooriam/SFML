@@ -11,7 +11,7 @@ Game::Game()
     if (!font.loadFromFile("resources/arial.ttf")) {
         std::cerr << "Error loading font\n";
     }
-
+    initButtons();
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -23,19 +23,21 @@ Game::Game()
     debugOverlay.addTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
     debugOverlay.addTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
     
-    // Create a button with size (200, 50) and text "Click Me"
-    // Initialize buttons and add them to the vector
-    buttons.emplace_back(100.0f,100.0f,150.0f,50.0f,&font,"button 1", sf::Color::Blue, sf::Color::Cyan, sf::Color::Magenta);
 
-    sf::FloatRect boundingBox = buttons[0].button.getGlobalBounds();
-    std::cout << "Bounding Box: " << boundingBox.left << ", " << boundingBox.top << ", " << boundingBox.width << ", " << boundingBox.height << std::endl;
-
-    std::cout << "button0 pos" << buttons[0].getPosition() << "\n";
 
 
     // Instead of setting the size, use zoom to zoom out
     //view.zoom(1.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
     window.setView(view);
+}
+
+void Game::initButtons()
+{
+    // Initialize buttons and add them to the vector
+    buttons.emplace_back(100.0f,100.0f,150.0f,50.0f,&font,"button 1", sf::Color::Blue, sf::Color::Cyan, sf::Color::Magenta);
+    sf::FloatRect boundingBox = buttons[0].button.getGlobalBounds();
+    std::cout << "Bounding Box: " << boundingBox.left << ", " << boundingBox.top << ", " << boundingBox.width << ", " << boundingBox.height << std::endl;
+    std::cout << "button0 pos" << buttons[0].getPosition() << "\n";
 }
 
 void Game::run() {
@@ -85,15 +87,6 @@ void Game::update(sf::Time totalElapsedTime) {
 
     for (auto& button : buttons){
          button.update(mousePos);
-        // testing code time 
-        //testing waka code time
-
-        // TESTING WAKA CODE TIME
-
-        // TESONTG WEAKA
-
-        // WAKA TESTING
-        
     }
 
 }
@@ -121,16 +114,11 @@ void Game::render() {
     }
 
     //Draw buttons.
-
-
-
     for (auto& button : buttons){
         button.draw(window,sf::RenderStates::Default);
     }
     debugOverlay.draw(window);
     window.display();
-
-  
-
-
 }
+
+

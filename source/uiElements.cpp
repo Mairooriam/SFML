@@ -15,6 +15,7 @@ Button::Button(float x, float y, float width, float height, sf::Font* font, cons
     this->buttonText.setString(text);
     this->buttonText.setFillColor(sf::Color::White);
     this->buttonText.setCharacterSize(fontsize);
+    std::cout << " boidningdsa" << buttonText.getLocalBounds().width << "\n";
     this->buttonText.setPosition(
         this->button.getPosition().x + (this->button.getSize().x / 2.0f) - (this->buttonText.getGlobalBounds().width / 2.0f) - fontsize/4,
         this->button.getPosition().y + (this->button.getSize().y / 2.0f) - (this->buttonText.getGlobalBounds().height / 2.0f) - fontsize/4
@@ -28,21 +29,22 @@ Button::Button(float x, float y, float width, float height, sf::Font* font, cons
     // Set other properties like font, color, etc.
 }
 
-int Button::handleEvent(const sf::Event& event) {
-    //std::cout << "EVENT: " << "x:" << event.mouseButton.x << "y: " <<  event.mouseButton.y << "\n";
+void Button::handleEvent(const sf::Event& event) {
 
-    std::cout << " IDLEING buton" << "\n"; 
+}
+
+int Button::update(const sf::Vector2i& mousePos) {
+    
     //IDLE
     this->buttonState = BTN_IDLE;
     
     // HOVER
-    if (this->button.getGlobalBounds().contains(event.mouseMove.x,event.mouseMove.y)){
+    if (this->button.getGlobalBounds().contains(mousePos.x,mousePos.y)){
         this->buttonState = BTN_HOVER;
-        std::cout << " HOVERING" << "\n";
+
         // PRESSED
-        if(event.type == sf::Event::MouseButtonPressed){
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             this->buttonState = BTN_ACTIVE;
-            
         }
     }
 
@@ -62,42 +64,10 @@ int Button::handleEvent(const sf::Event& event) {
         break;
     default:
         this->button.setFillColor(sf::Color::Red); // should not happendm only in error
+        return -1;
         break;
     }
     return -1;
-}
-
-void Button::update(const sf::Vector2i& mousePos) {
-    
-    //IDLE
-    this->buttonState = BTN_IDLE;
-    
-    // HOVER
-    if (this->button.getGlobalBounds().contains(mousePos.x,mousePos.y)){
-        this->buttonState = BTN_HOVER;
-
-        // PRESSED
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            this->buttonState = BTN_ACTIVE;
-        }
-    }
-
-    switch (this->buttonState)
-    {
-    case BTN_IDLE:
-        this->button.setFillColor(this->idleColor);
-        break;
-    case BTN_HOVER:
-        this->button.setFillColor(this->hoverColor);
-        break;
-    case BTN_ACTIVE:
-        this->button.setFillColor(this->activeColor);
-        break;
-    default:
-        this->button.setFillColor(sf::Color::Red); // should not happendm only in error
-        break;
-    }
-    
 }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -113,21 +83,3 @@ bool Button::isPressed() const
     return false;
 }
 
-
-
-Label::Label(const std::string& text) {
-    labelText.setString(text);
-    // Set other properties like font, color, etc.
-}
-
-// void Label::handleEvent(const sf::Event& event) {
-//     // Labels typically don't handle events, but you can implement if needed
-// }
-
-// void Label::update(float dt) {
-//     // Update label state if necessary
-// }
-
-void Label::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    target.draw(labelText, states);
-}
