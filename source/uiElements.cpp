@@ -45,6 +45,7 @@ int Button::update(const sf::Vector2i& mousePos) {
         // PRESSED
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             this->buttonState = BTN_ACTIVE;
+            std::cout << "Pressed: " << buttonText.getString().toAnsiString() << "\n";
         }
     }
 
