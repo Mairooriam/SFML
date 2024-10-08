@@ -16,11 +16,13 @@ public:
     sf::Text text;
     DebugOverlay debugOverlay;
     std::vector<Button> buttons;
+    std::vector<Node> map;
 private:
     void processEvents();
     void update(sf::Time totalElapsedTime);
     void render();
     void initButtons();
+    void initMap(size_t mapSize, sf::Vector2f nodeSize);
 
     
     std::vector<Ball> balls;

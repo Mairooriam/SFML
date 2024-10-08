@@ -12,6 +12,7 @@ Game::Game()
         std::cerr << "Error loading font\n";
     }
     initButtons();
+    initMap(10,sf::Vector2f(100,100));
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -38,6 +39,22 @@ void Game::initButtons()
     sf::FloatRect boundingBox = buttons[0].button.getGlobalBounds();
     std::cout << "Bounding Box: " << boundingBox.left << ", " << boundingBox.top << ", " << boundingBox.width << ", " << boundingBox.height << std::endl;
     std::cout << "button0 pos" << buttons[0].getPosition() << "\n";
+}
+
+void Game::initMap(size_t mapSize, sf::Vector2f nodeSize)
+{
+    float offset = nodeSize.x + 5.0f;
+    //map.emplace_back(1, 1, nodeSize, &font, std::to_string(1) + "," + std::to_string(1));
+    for (size_t i = 0; i < mapSize; i++)
+    {
+        for (size_t j = 0; j < mapSize; j++)
+        {
+            map.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j));
+        }
+        
+        
+    }
+    
 }
 
 void Game::run() {
@@ -89,6 +106,10 @@ void Game::update(sf::Time totalElapsedTime) {
          button.update(mousePos);
     }
 
+     for (auto& node : map){
+        node.update(mousePos);
+    }
+
 }
 
 void Game::render() {
@@ -117,6 +138,13 @@ void Game::render() {
     for (auto& button : buttons){
         button.draw(window,sf::RenderStates::Default);
     }
+
+    // Draw map
+    for (auto& node : map)
+    {
+        node.draw(window, sf::RenderStates::Default);
+    }
+    
     debugOverlay.draw(window);
     window.display();
 }

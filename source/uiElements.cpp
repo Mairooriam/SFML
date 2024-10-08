@@ -84,3 +84,99 @@ bool Button::isPressed() const
     return false;
 }
 
+Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text) 
+    {
+    this->nodeState = NODE_EMPTY;
+    this->font = font;
+
+    this->node.setPosition(x,y);
+    this->node.setSize(nodeSize);
+    
+    float fontsize = 32.0f;
+    this->nodeText.setFont(*this->font);
+    this->nodeText.setString(text);
+    this->nodeText.setFillColor(sf::Color::White);
+    this->nodeText.setCharacterSize(fontsize);
+    std::cout << " boidningdsa" << nodeText.getLocalBounds().width << "\n";
+    this->nodeText.setPosition(
+        this->node.getPosition().x + (this->node.getSize().x / 2.0f) - (this->nodeText.getGlobalBounds().width / 2.0f) - fontsize/4,
+        this->node.getPosition().y + (this->node.getSize().y / 2.0f) - (this->nodeText.getGlobalBounds().height / 2.0f) - fontsize/4
+    );
+
+
+
+
+    this->node.setFillColor(getColor(NODE_EMPTY));
+    // Set other properties like font, color, etc.
+}
+
+void Node::handleEvent(const sf::Event& event) {
+
+}
+
+int Node::update(const sf::Vector2i& mousePos) {
+    
+    //IDLE
+    this->nodeState = BTN_IDLE;
+    
+    // HOVER
+    if (this->node.getGlobalBounds().contains(mousePos.x,mousePos.y)){
+        this->nodeState = NODE_PLAYER;
+
+        // PRESSED
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            this->nodeState = NODE_WALL;
+            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
+        }
+    }
+
+    switch (this->nodeState)
+    {
+    case NODE_EMPTY:
+        this->node.setFillColor(getColor(NODE_EMPTY));
+        return NODE_EMPTY;
+        break;
+    case NODE_PLAYER:
+        this->node.setFillColor(getColor(NODE_PLAYER));
+        return NODE_PLAYER;
+        break;
+    case NODE_ENEMY:
+        this->node.setFillColor(getColor(NODE_ENEMY));
+        return NODE_ENEMY;
+        break;
+    case NODE_WALL:
+        this->node.setFillColor(getColor(NODE_WALL));
+        return NODE_WALL;
+        break;
+    default:
+        this->node.setFillColor(sf::Color::Red); // should not happendm only in error
+        return -1;
+        break;
+    }
+    return -1;
+}
+
+
+void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    target.draw(this->node);
+    target.draw(this->nodeText);
+}
+
+bool Node::isPressed() const
+{
+    if(this->nodeState == BTN_ACTIVE){
+        return true;
+    }
+    return false;
+}
+
+sf::Color Node::getColor(NodeType type){
+    switch (type) {
+        case NodeType::NODE_EMPTY: return sf::Color::Magenta;
+        case NodeType::NODE_PLAYER: return sf::Color::Green;
+        case NodeType::NODE_ENEMY: return sf::Color::Red;
+        case NodeType::NODE_WALL: return sf::Color::Blue;
+        default: return sf::Color::Black;
+    }
+}
+

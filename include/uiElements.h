@@ -10,7 +10,12 @@ public:
     //virtual void handleEvent(const sf::Event& event) = 0;
     //virtual void update(float dt) = 0;
 };
-
+enum NodeType{
+    NODE_EMPTY = 0,
+    NODE_PLAYER,
+    NODE_ENEMY,
+    NODE_WALL
+};
 
 enum button_states{
     BTN_IDLE = 0,
@@ -42,6 +47,24 @@ private:
     sf::Color activeColor;
 };
 
+class Node : public UIElement {
+public:
+    Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text);
+    
+    void handleEvent(const sf::Event& event);
+    int update(const sf::Vector2i& mousePos);
+    sf::Color getColor(NodeType type);
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    bool isPressed() const;
 
+    sf::RectangleShape node;
+    short unsigned nodeState;
+private:
+    
+
+    sf::Font* font;
+    sf::Text nodeText;
+    sf::Color nodeColor;
+};
 
 #endif // OVERLAY_H
