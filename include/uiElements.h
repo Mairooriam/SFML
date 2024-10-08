@@ -14,7 +14,8 @@ enum NodeType{
     NODE_EMPTY = 0,
     NODE_PLAYER,
     NODE_ENEMY,
-    NODE_WALL
+    NODE_WALL,
+    NODE_HOVER
 };
 
 enum button_states{
@@ -56,9 +57,10 @@ public:
     sf::Color getColor(NodeType type);
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
+    bool isNodeIgnored(NodeType type);
 
     sf::RectangleShape node;
-    short unsigned nodeState;
+    NodeType nodeState;
 private:
     
 

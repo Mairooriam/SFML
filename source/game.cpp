@@ -81,7 +81,7 @@ void Game::run() {
 void Game::processEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
-        processHotbarEvents(&event);
+        processKeyPressed(&event);
         if (event.type == sf::Event::Closed)
             window.close();
         if (event.type == sf::Event::MouseButtonReleased){
@@ -95,11 +95,12 @@ void Game::processEvents() {
     }
 }
 
-void Game::processHotbarEvents(sf::Event *event)
+void Game::processKeyPressed(sf::Event *event)
 {
     if (event->type == sf::Event::KeyPressed) {
         switch (event->key.code) {
             case sf::Keyboard::Num1:
+
                 std::cout << "Button 1 pressed\n";
                 break;
             case sf::Keyboard::Num2:

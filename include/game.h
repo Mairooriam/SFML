@@ -19,7 +19,7 @@ public:
     std::vector<Node> map;
 private:
     void processEvents();
-    void processHotbarEvents(sf::Event *event);
+    void processKeyPressed(sf::Event *event);
     void update(sf::Time totalElapsedTime);
     void render();
     void initButtons();

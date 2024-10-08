@@ -117,14 +117,22 @@ void Node::handleEvent(const sf::Event& event) {
 int Node::update(const sf::Vector2i& mousePos) {
     
     //IDLE
-    this->nodeState = BTN_IDLE;
+    if (nodeState == NODE_HOVER){
+    this->nodeState = NODE_EMPTY;
+    }
     
     // HOVER
     if (this->node.getGlobalBounds().contains(mousePos.x,mousePos.y)){
-        this->nodeState = NODE_PLAYER;
-
+        if (nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL ){
+            this->nodeState = NODE_HOVER;    
+        }
         // PRESSED
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+            this->nodeState = NODE_WALL;
+            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
+        }
+        // MOUSE2
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
             this->nodeState = NODE_WALL;
             std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
         }
@@ -147,6 +155,10 @@ int Node::update(const sf::Vector2i& mousePos) {
     case NODE_WALL:
         this->node.setFillColor(getColor(NODE_WALL));
         return NODE_WALL;
+        break;
+    case NODE_HOVER:
+        this->node.setFillColor(getColor(NODE_HOVER));
+        return NODE_HOVER;
         break;
     default:
         this->node.setFillColor(sf::Color::Red); // should not happendm only in error
@@ -176,7 +188,9 @@ sf::Color Node::getColor(NodeType type){
         case NodeType::NODE_PLAYER: return sf::Color::Green;
         case NodeType::NODE_ENEMY: return sf::Color::Red;
         case NodeType::NODE_WALL: return sf::Color::Blue;
+        case NodeType::NODE_HOVER: return sf::Color::Yellow;
         default: return sf::Color::Black;
     }
 }
+
 
