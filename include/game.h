@@ -7,6 +7,7 @@
 #include <SFML/Window/Mouse.hpp>
 #include "debugOverlay.h"
 #include "uiElements.h"
+#include "enums.h"
 class Game {
 public:
     Game();
@@ -16,7 +17,7 @@ public:
     sf::Text text;
     DebugOverlay debugOverlay;
     std::vector<Button> buttons;
-    std::vector<Node> map;
+    std::vector<std::vector<Node>> map;
 private:
     void processEvents();
     void processKeyPressed(sf::Event *event);
@@ -25,7 +26,7 @@ private:
     void initButtons();
     void initMap(size_t mapSize, sf::Vector2f nodeSize);
 
-    
+    NodeType selectedHotkey = NODE_EMPTY;
     std::vector<Ball> balls;
     sf::Time totalElapsedTime;
     sf::View view;

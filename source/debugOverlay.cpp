@@ -1,4 +1,5 @@
 #include "debugOverlay.h"
+#include <iostream>
 
 DebugOverlay::DebugOverlay() : yOffset(0.0f) {
     if (!font.loadFromFile("resources/arial.ttf")) {
@@ -27,6 +28,22 @@ void DebugOverlay::updateTextField(const std::string label, const std::string& v
             break;
         }
     }
+}
+
+void DebugOverlay::drawBackground(sf::RenderWindow &window) {
+    float sizeX = 0;
+    float sizeY = 0;
+    for (const auto& text : textFields) {
+        sizeY += text.text.getGlobalBounds().height + 6.0f; // Adding some padding
+        sizeX += text.text.getGlobalBounds().width;
+
+    }
+
+    sf::RectangleShape background(sf::Vector2f(sizeX, sizeY));
+    background.setFillColor(sf::Color(0, 0, 0, 150)); // Semi-transparent black background
+    background.setPosition(0, 0);
+    std::cout << "drawing debug rect size:" << background.getSize().x << "x"<< background.getSize().y <<"\n";
+    window.draw(background);
 }
 
 void DebugOverlay::draw(sf::RenderWindow& window) {

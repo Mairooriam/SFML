@@ -2,6 +2,7 @@
 #define OVERLAY_H
 
 #include <SFML/Graphics.hpp>
+#include "enums.h"
 #include <vector>
 #include <memory>
 #include <iostream>
@@ -10,20 +11,7 @@ public:
     //virtual void handleEvent(const sf::Event& event) = 0;
     //virtual void update(float dt) = 0;
 };
-enum NodeType{
-    NODE_EMPTY = 0,
-    NODE_PLAYER,
-    NODE_ENEMY,
-    NODE_WALL,
-    NODE_HOVER
-};
 
-enum button_states{
-    BTN_IDLE = 0,
-    BTN_ACTIVE,
-    BTN_HOVER
-    
-};
 class Button : public UIElement {
 public:
     Button(float x, float y, float width, float height, sf::Font* font, const std::string text, 
@@ -53,16 +41,18 @@ public:
     Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text);
     
     void handleEvent(const sf::Event& event);
-    int update(const sf::Vector2i& mousePos);
-    sf::Color getColor(NodeType type);
+    int update(const sf::Vector2i& mousePos, NodeType hotbarSelection);
+    
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
     bool isNodeIgnored(NodeType type);
-
+    
+    
+    std::string nodeTypeToString(NodeType);
+    sf::Vector2f position;
     sf::RectangleShape node;
     NodeType nodeState;
 private:
-    
 
     sf::Font* font;
     sf::Text nodeText;

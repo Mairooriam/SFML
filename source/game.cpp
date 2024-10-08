@@ -3,16 +3,18 @@
 #include <iostream>
 #include "vectorOperators.h"
 
+
 Game::Game()
     : window(sf::VideoMode(800, 600), "SFML Window with Shape"),
-      view(sf::FloatRect(0, 0, 800, 600)) {
+      view(sf::FloatRect(0, 0, 800, 600))
+    {
     
     // intialize font
     if (!font.loadFromFile("resources/arial.ttf")) {
         std::cerr << "Error loading font\n";
     }
     initButtons();
-    initMap(10,sf::Vector2f(100,100));
+    initMap(7,sf::Vector2f(100,100));
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -23,8 +25,8 @@ Game::Game()
     // Debug window init
     debugOverlay.addTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
     debugOverlay.addTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
-    
-
+    debugOverlay.addTextField("Selected tile: ", nodeTypeToString(selectedHotkey));
+    debugOverlay.drawBackground(window);
 
 
     // Instead of setting the size, use zoom to zoom out
@@ -45,14 +47,22 @@ void Game::initMap(size_t mapSize, sf::Vector2f nodeSize)
 {
     float offset = nodeSize.x + 5.0f;
     //map.emplace_back(1, 1, nodeSize, &font, std::to_string(1) + "," + std::to_string(1));
-    for (size_t i = 0; i < mapSize; i++)
-    {
-        for (size_t j = 0; j < mapSize; j++)
-        {
-            map.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j));
+    // for (size_t i = 0; i < mapSize; i++)
+    // {
+    //     for (size_t j = 0; j < mapSize; j++)
+    //     {
+    //         map.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j));
+    //     }
+        
+        
+    // }
+
+        for (size_t i = 0; i < mapSize; ++i) {
+        std::vector<Node> row;
+        for (size_t j = 0; j < mapSize; ++j) {
+            row.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j));
         }
-        
-        
+        map.push_back(row);
     }
     
 }
@@ -100,17 +110,20 @@ void Game::processKeyPressed(sf::Event *event)
     if (event->type == sf::Event::KeyPressed) {
         switch (event->key.code) {
             case sf::Keyboard::Num1:
-
-                std::cout << "Button 1 pressed\n";
+                this->selectedHotkey = NODE_EMPTY;
+                std::cout << "Button 1 pressed selected empty\n";
                 break;
             case sf::Keyboard::Num2:
-                std::cout << "Button 2 pressed\n";
+                this->selectedHotkey = NODE_PLAYER;
+                std::cout << "Button 2 pressed selected player\n";
                 break;
             case sf::Keyboard::Num3:
-                std::cout << "Button 3 pressed\n";
+                this->selectedHotkey = NODE_ENEMY;
+                std::cout << "Button 3 pressed Selected enemy\n";
                 break;
             case sf::Keyboard::Num4:
-                std::cout << "Button 4 pressed\n";
+                this->selectedHotkey = NODE_WALL;
+                std::cout << "Button 4 pressed, Selected WALL\n";
                 break;
             case sf::Keyboard::Num5:
                 std::cout << "Button 5 pressed\n";
@@ -136,7 +149,7 @@ void Game::processKeyPressed(sf::Event *event)
 void Game::update(sf::Time totalElapsedTime) {
     debugOverlay.updateTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
     debugOverlay.updateTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
-    
+    debugOverlay.updateTextField("Selected tile: ", nodeTypeToString(selectedHotkey));
     for (auto& ball : balls) {
         if(!ball.update(totalElapsedTime.asSeconds())){
             totalElapsedTime = sf::seconds(0);
@@ -147,8 +160,11 @@ void Game::update(sf::Time totalElapsedTime) {
          button.update(mousePos);
     }
 
-     for (auto& node : map){
-        node.update(mousePos);
+    for (auto& row : map){
+        for (auto& node : row){
+            node.update(mousePos,  selectedHotkey);
+            //std::cout << "Node: " << node.position.x << node.position.y << "\n";
+        }
     }
 
 }
@@ -181,11 +197,13 @@ void Game::render() {
     }
 
     // Draw map
-    for (auto& node : map)
-    {
-        node.draw(window, sf::RenderStates::Default);
-    }
     
+    for (auto& row : map){
+        for (Node node : row){
+            node.draw(window, sf::RenderStates::Default);
+        }
+    }
+    debugOverlay.drawBackground(window);
     debugOverlay.draw(window);
     window.display();
 }

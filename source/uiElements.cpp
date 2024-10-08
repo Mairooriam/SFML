@@ -88,6 +88,8 @@ Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::s
     {
     this->nodeState = NODE_EMPTY;
     this->font = font;
+    this->position.x = x;
+    this->position.y = y;
 
     this->node.setPosition(x,y);
     this->node.setSize(nodeSize);
@@ -106,7 +108,7 @@ Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::s
 
 
 
-    this->node.setFillColor(getColor(NODE_EMPTY));
+    this->node.setFillColor(nodeTypeToColor(NODE_EMPTY));
     // Set other properties like font, color, etc.
 }
 
@@ -114,7 +116,7 @@ void Node::handleEvent(const sf::Event& event) {
 
 }
 
-int Node::update(const sf::Vector2i& mousePos) {
+int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     
     //IDLE
     if (nodeState == NODE_HOVER){
@@ -123,17 +125,17 @@ int Node::update(const sf::Vector2i& mousePos) {
     
     // HOVER
     if (this->node.getGlobalBounds().contains(mousePos.x,mousePos.y)){
-        if (nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL ){
+        // if empty selected still show hower
+        if (hotbarSelection == NODE_EMPTY){
+            this->nodeState = NODE_HOVER;  
+        }
+        // add isvalid function or something
+        else if(nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL ){
             this->nodeState = NODE_HOVER;    
         }
         // PRESSED
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            this->nodeState = NODE_WALL;
-            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
-        }
-        // MOUSE2
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
-            this->nodeState = NODE_WALL;
+            this->nodeState = hotbarSelection;
             std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
         }
     }
@@ -141,23 +143,23 @@ int Node::update(const sf::Vector2i& mousePos) {
     switch (this->nodeState)
     {
     case NODE_EMPTY:
-        this->node.setFillColor(getColor(NODE_EMPTY));
+        this->node.setFillColor(nodeTypeToColor(NODE_EMPTY));
         return NODE_EMPTY;
         break;
     case NODE_PLAYER:
-        this->node.setFillColor(getColor(NODE_PLAYER));
+        this->node.setFillColor(nodeTypeToColor(NODE_PLAYER));
         return NODE_PLAYER;
         break;
     case NODE_ENEMY:
-        this->node.setFillColor(getColor(NODE_ENEMY));
+        this->node.setFillColor(nodeTypeToColor(NODE_ENEMY));
         return NODE_ENEMY;
         break;
     case NODE_WALL:
-        this->node.setFillColor(getColor(NODE_WALL));
+        this->node.setFillColor(nodeTypeToColor(NODE_WALL));
         return NODE_WALL;
         break;
     case NODE_HOVER:
-        this->node.setFillColor(getColor(NODE_HOVER));
+        this->node.setFillColor(nodeTypeToColor(NODE_HOVER));
         return NODE_HOVER;
         break;
     default:
@@ -182,15 +184,6 @@ bool Node::isPressed() const
     return false;
 }
 
-sf::Color Node::getColor(NodeType type){
-    switch (type) {
-        case NodeType::NODE_EMPTY: return sf::Color::Magenta;
-        case NodeType::NODE_PLAYER: return sf::Color::Green;
-        case NodeType::NODE_ENEMY: return sf::Color::Red;
-        case NodeType::NODE_WALL: return sf::Color::Blue;
-        case NodeType::NODE_HOVER: return sf::Color::Yellow;
-        default: return sf::Color::Black;
-    }
-}
+
 
 

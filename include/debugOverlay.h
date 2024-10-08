@@ -10,6 +10,7 @@ public:
     DebugOverlay();
     void addTextField(const std::string label, const std::string& value);
     void updateTextField(const std::string label, const std::string& value);
+    void drawBackground(sf::RenderWindow& window);
     void draw(sf::RenderWindow& window);
 
 private:
