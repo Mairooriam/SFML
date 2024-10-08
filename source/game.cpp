@@ -70,6 +70,7 @@ void Game::run() {
             mousePos = sf::Mouse::getPosition(window);
             timeSinceLastUpdate -= TimePerFrame;
             processEvents();
+            
             update(totalElapsedTime);
         }
 
@@ -80,6 +81,7 @@ void Game::run() {
 void Game::processEvents() {
     sf::Event event;
     while (window.pollEvent(event)) {
+        processHotbarEvents(&event);
         if (event.type == sf::Event::Closed)
             window.close();
         if (event.type == sf::Event::MouseButtonReleased){
@@ -88,6 +90,44 @@ void Game::processEvents() {
         }
         if(buttons[0].buttonState == 1){
             std::cout << "BUTTOM PRESSED" << "\n";
+        }
+        
+    }
+}
+
+void Game::processHotbarEvents(sf::Event *event)
+{
+    if (event->type == sf::Event::KeyPressed) {
+        switch (event->key.code) {
+            case sf::Keyboard::Num1:
+                std::cout << "Button 1 pressed\n";
+                break;
+            case sf::Keyboard::Num2:
+                std::cout << "Button 2 pressed\n";
+                break;
+            case sf::Keyboard::Num3:
+                std::cout << "Button 3 pressed\n";
+                break;
+            case sf::Keyboard::Num4:
+                std::cout << "Button 4 pressed\n";
+                break;
+            case sf::Keyboard::Num5:
+                std::cout << "Button 5 pressed\n";
+                break;
+            case sf::Keyboard::Num6:
+                std::cout << "Button 6 pressed\n";
+                break;
+            case sf::Keyboard::Num7:
+                std::cout << "Button 7 pressed\n";
+                break;
+            case sf::Keyboard::Num8:
+                std::cout << "Button 8 pressed\n";
+                break;
+            case sf::Keyboard::Num9:
+                std::cout << "Button 9 pressed\n";
+                break;
+            default:
+                break;
         }
     }
 }

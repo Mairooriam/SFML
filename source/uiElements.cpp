@@ -97,7 +97,7 @@ Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::s
     this->nodeText.setString(text);
     this->nodeText.setFillColor(sf::Color::White);
     this->nodeText.setCharacterSize(fontsize);
-    std::cout << " boidningdsa" << nodeText.getLocalBounds().width << "\n";
+    
     this->nodeText.setPosition(
         this->node.getPosition().x + (this->node.getSize().x / 2.0f) - (this->nodeText.getGlobalBounds().width / 2.0f) - fontsize/4,
         this->node.getPosition().y + (this->node.getSize().y / 2.0f) - (this->nodeText.getGlobalBounds().height / 2.0f) - fontsize/4
@@ -164,7 +164,7 @@ void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 bool Node::isPressed() const
 {
-    if(this->nodeState == BTN_ACTIVE){
+    if(this->nodeState == NODE_WALL){
         return true;
     }
     return false;
