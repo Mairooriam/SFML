@@ -84,16 +84,19 @@ void Game::processKeyPressed(sf::Event *event)
                 std::cout << "Button 3 pressed Selected enemy\n";
                 break;
             case sf::Keyboard::Num4:
-                this->selectedHotkey = NODE_WALL;
+                this->selectedHotkey = NODE_WALL_1;
                 std::cout << "Button 4 pressed, Selected WALL\n";
                 break;
             case sf::Keyboard::Num5:
+            this->selectedHotkey = NODE_WALL_2;
                 std::cout << "Button 5 pressed\n";
                 break;
             case sf::Keyboard::Num6:
+            this->selectedHotkey = NODE_WALL_3;
                 std::cout << "Button 6 pressed\n";
                 break;
             case sf::Keyboard::Num7:
+                this->selectedHotkey = NODE_WALL_4;
                 std::cout << "Button 7 pressed\n";
                 break;
             case sf::Keyboard::Num8:
@@ -162,9 +165,18 @@ void Game::render() {
     
     for (auto& row : map){
         for (Node node : row){
-            node.draw(window, sf::RenderStates::Default);
+            //node.draw(window, sf::RenderStates::Default);
+            window.draw(node);
         }
     }
+
+    // draw sprite
+    sf::Sprite sprite;
+    sprite.setTexture(textures[1]);
+    sprite.setTextureRect(sf::IntRect(0,0,16,16));// Assuming textures[0] is the desired texture
+    sprite.setPosition(250.f, 250.f); // Set the position of the sprite
+    
+    window.draw(sprite);
     debugOverlay.drawBackground(window);
     debugOverlay.draw(window);
     window.display();
@@ -174,16 +186,23 @@ void Game::render() {
 
 void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset)
 {
+    // // Create a texture and load a portion of the image
+    // sf::Texture temptexture;
+    // if (!temptexture.loadFromFile("resources/wall_textures.png")) {
+    //     std::cout << "Error loading texture portion\n";
+    // }
+
+  
+
     offset += nodeSize.x;
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j),&textures[0],&textures);
+            
+            row.emplace_back(j * offset, i * offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j), this->textures[1], &textures);
+        }
+        map.push_back(row);
     }
-
-    map.push_back(row);
-    }
-    
 }
 
 int Game::initFonts()

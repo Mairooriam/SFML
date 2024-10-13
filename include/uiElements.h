@@ -38,7 +38,7 @@ private:
 
 class Node : public UIElement {
 public:
-    Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture* Initialtexture, std::vector<sf::Texture>* textures);
+    Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture Initialtexture, std::vector<sf::Texture>* textures);
     
     void handleEvent(const sf::Event& event);
     int update(const sf::Vector2i& mousePos, NodeType hotbarSelection);
@@ -46,13 +46,14 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
     bool isNodeIgnored(NodeType type);
-    void updateTexture(TextureFileNames texturename, TextureEnum texture);
+    void updateTexture(TextureEnum textureIndex);
     sf::Texture selectTextureFromFile(sf::Texture & texture, TextureEnum textureName);
     std::string nodeTypeToString(NodeType);
     sf::Vector2f position;
-    sf::RectangleShape node;
+    sf::Sprite node;
     NodeType nodeState;
     std::vector<sf::Texture>* textures;
+    sf::Texture texture;
 private:
     
     sf::Font* font;

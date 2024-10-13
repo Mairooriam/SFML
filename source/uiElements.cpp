@@ -85,28 +85,39 @@ bool Button::isPressed() const
 }
 
 
-Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture* initialTexture, std::vector<sf::Texture>* textures) {
+Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture initialTexture, std::vector<sf::Texture>* textures) {
     this->nodeState = NODE_EMPTY;
     this->font = font;
     this->position.x = x;
     this->position.y = y;
-    this->textures = textures;
+    this->texture = initialTexture;
+
+    // Check if the initial texture is valid
+    if (initialTexture.getSize().x > 0 && initialTexture.getSize().y > 0) {
+        this->node.setTexture(initialTexture, true);
+        std::cout << "Texture set successfully.\n";
+    } else {
+    // Handle the case where the texture is not valid
+    std::cout << "Error: Invalid initial texture provided.\n";
+    // You can set a default texture or handle the error as needed
+    }
 
     this->node.setPosition(x, y);
-    this->node.setSize(nodeSize);
-    this->node.setTexture(initialTexture); // Use pointer to sf::Texture
+    this->node.setTexture(initialTexture, true); // Use pointer to sf::Texture
+    this->node.setTextureRect(sf::IntRect(0,0,16,16));
+    this->node.setScale(1.0f,1.0f);
     float fontsize = 32.0f;
     this->nodeText.setFont(*this->font);
     this->nodeText.setString(text);
     this->nodeText.setFillColor(sf::Color::White);
     this->nodeText.setCharacterSize(fontsize);
 
-    this->nodeText.setPosition(
-        this->node.getPosition().x + (this->node.getSize().x / 2.0f) - (this->nodeText.getGlobalBounds().width / 2.0f) - fontsize / 4,
-        this->node.getPosition().y + (this->node.getSize().y / 2.0f) - (this->nodeText.getGlobalBounds().height / 2.0f) - fontsize / 4
-    );
+    //this->nodeText.setPosition(
+        //this->node.getPosition().x + (this->node.getSize().x / 2.0f) - (this->nodeText.getGlobalBounds().width / 2.0f) - fontsize / 4,
+        //this->node.getPosition().y + (this->node.getSize().y / 2.0f) - (this->nodeText.getGlobalBounds().height / 2.0f) - fontsize / 4
+    //);
 
-    this->node.setFillColor(nodeTypeToColor(NODE_EMPTY));
+    //this->node.setFillColor(nodeTypeToColor(NODE_EMPTY));
     // Set other properties like font, color, etc.
 }
 
@@ -115,20 +126,16 @@ void Node::handleEvent(const sf::Event& event) {
 
 }
 
-void Node::updateTexture(TextureFileNames textureName, TextureEnum texture) {
-    // Assuming 'textureName' is an index or identifier to access the correct texture
-    if (textureName < this->textures->size()) {
-        sf::Texture& chosenTexture = this->textures->at(textureName); // Access the texture from the vector
-        sf::Texture subTexture = this->selectTextureFromFile(chosenTexture, texture); // Get the sub-texture
-        this->node.setTexture(&chosenTexture); // Set the texture to the node
-    } else {
-        // Handle the case where the texture index is out of bounds
-        std::cerr << "Error: Texture index out of bounds\n";
-    }
+void Node::updateTexture(TextureEnum textureIndex) {
+
+    node.setTexture(this->texture);
+    node.setTextureRect(sf::IntRect(textureIndex*16,0,16,16));
+    node.setScale(6.4f,6.4f);
 }
 
 int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     
+   updateTexture(FLOOR_GREEN);
     //IDLE
     if (nodeState == NODE_HOVER){
     this->nodeState = NODE_EMPTY;
@@ -141,7 +148,7 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
             this->nodeState = NODE_HOVER;  
         }
         // add isvalid function or something
-        else if(nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL ){
+        else if(nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL_1 && nodeState != NODE_WALL_2 && nodeState != NODE_WALL_3&& nodeState != NODE_WALL_4){
             this->nodeState = NODE_HOVER;    
         }
         // PRESSED
@@ -154,58 +161,55 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     switch (this->nodeState)
     {
     case NODE_EMPTY:
-        this->node.setFillColor(nodeTypeToColor(NODE_EMPTY));
+        this->node.setColor(nodeTypeToColor(NODE_EMPTY));
         return NODE_EMPTY;
         break;
     case NODE_PLAYER:
-        this->node.setFillColor(nodeTypeToColor(NODE_PLAYER));
+        this->node.setColor(nodeTypeToColor(NODE_PLAYER));
         return NODE_PLAYER;
         break;
     case NODE_ENEMY:
-        this->node.setFillColor(nodeTypeToColor(NODE_ENEMY));
+        this->node.setColor(nodeTypeToColor(NODE_ENEMY));
         return NODE_ENEMY;
         break;
-    case NODE_WALL:
-        this->node.setFillColor(nodeTypeToColor(NODE_WALL));
-        this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
-        return NODE_WALL;
+    case NODE_WALL_1:
+        //this->node.setColor(nodeTypeToColor(NODE_WALL));
+        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
+        updateTexture(WALL_CORNER_BOTTOM_LEFT);
+        return NODE_WALL_1;
+        break;
+    case NODE_WALL_2:
+        //this->node.setColor(nodeTypeToColor(NODE_WALL));
+        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
+        updateTexture(WALL_CORNER_BOTTOM_RIGHT);
+        return NODE_WALL_2;
+        break;
+    case NODE_WALL_3:
+        //this->node.setColor(nodeTypeToColor(NODE_WALL));
+        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
+        updateTexture(WALL_JUNCTION);
+        return NODE_WALL_3;
+        break;
+    case NODE_WALL_4:
+        //this->node.setColor(nodeTypeToColor(NODE_WALL));
+        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
+        updateTexture(WALL_HORIZONTAL);
+        return NODE_WALL_4;
         break;
     case NODE_HOVER:
-        this->node.setFillColor(nodeTypeToColor(NODE_HOVER));
+        this->node.setColor(nodeTypeToColor(NODE_HOVER));
         return NODE_HOVER;
         break;
     default:
-        this->node.setFillColor(sf::Color::Red); // should not happendm only in error
+        //this->node.setFillColor(sf::Color::Red); // should not happendm only in error
         return -1;
         break;
     }
+
     return -1;
 }
 
-sf::Texture Node::selectTextureFromFile(sf::Texture & texture, TextureEnum textureName)
-{
-    sf::Texture subTexture;
-    sf::IntRect rect;
 
-    // Calculate the position of the sub-texture
-    int textureSize = 16;
-    int texturesPerRow = 128 / textureSize;
-    int x = (textureName % texturesPerRow) * textureSize;
-    int y = (textureName / texturesPerRow) * textureSize;
-    std::cout << "TEXTURE X:" << x << "TEXTURE Y:" << y << "\n";
-    rect.left = x;
-    rect.top = y;
-    rect.width = textureSize;
-    rect.height = textureSize;
-
-    // Load the sub-texture
-    if (subTexture.loadFromImage(texture.copyToImage(), rect)) {
-        return subTexture;
-    } else {
-        // Handle error (return an empty texture or throw an exception)
-        return sf::Texture();
-    }
-}
 
 
 void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -215,10 +219,10 @@ void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 
 bool Node::isPressed() const
 {
-    if(this->nodeState == NODE_WALL){
-        return true;
-    }
-    return false;
+    // if(this->nodeState == NODE_WALL){
+    //     return true;
+    // }
+    // return false;
 }
 
 

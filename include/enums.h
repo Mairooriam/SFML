@@ -6,7 +6,10 @@ enum NodeType{
     NODE_EMPTY = 0,
     NODE_PLAYER,
     NODE_ENEMY,
-    NODE_WALL,
+    NODE_WALL_1,
+    NODE_WALL_2,
+    NODE_WALL_3,
+    NODE_WALL_4,
     NODE_HOVER
 };
 
@@ -24,7 +27,8 @@ enum TextureEnum{
     WALL_CORNER_BOTTOM_LEFT,
     WALL_CORNER_BOTTOM_RIGHT,
     WALL_CORNER_TOP_LEFT,
-    WALL_CORNER_TOP_RIGHT
+    WALL_CORNER_TOP_RIGHT,
+    FLOOR_GREEN
 };
 enum TextureFileNames{
     TEXTURE_KISSA = 0,
