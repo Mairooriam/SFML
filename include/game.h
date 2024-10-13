@@ -23,9 +23,14 @@ private:
     void processKeyPressed(sf::Event *event);
     void update(sf::Time totalElapsedTime);
     void render();
+
+    // init stuff
     void initButtons();
     void initMap(size_t mapSize, sf::Vector2f nodeSize);
-
+    int initFonts();
+    int initTextures();
+    int initDebugWindow();
+    sf::Texture texture;
     NodeType selectedHotkey = NODE_EMPTY;
     std::vector<Ball> balls;
     sf::Time totalElapsedTime;

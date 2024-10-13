@@ -38,7 +38,7 @@ private:
 
 class Node : public UIElement {
 public:
-    Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text);
+    Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture* texture);
     
     void handleEvent(const sf::Event& event);
     int update(const sf::Vector2i& mousePos, NodeType hotbarSelection);

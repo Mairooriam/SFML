@@ -8,12 +8,9 @@ Game::Game()
     : window(sf::VideoMode(800, 600), "SFML Window with Shape"),
       view(sf::FloatRect(0, 0, 800, 600))
     {
+    initFonts();
+    initTextures();
     
-    // intialize font
-    if (!font.loadFromFile("resources/arial.ttf")) {
-        std::cerr << "Error loading font\n";
-    }
-    initButtons();
     initMap(7,sf::Vector2f(100,100));
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
@@ -21,51 +18,16 @@ Game::Game()
     for (size_t offset = 0; offset < 1; offset++) {
         balls.emplace_back(5, position, initialVelocity);
     }
-
-    // Debug window init
-    debugOverlay.addTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
-    debugOverlay.addTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
-    debugOverlay.addTextField("Selected tile: ", nodeTypeToString(selectedHotkey));
-    debugOverlay.drawBackground(window);
-
-
     // Instead of setting the size, use zoom to zoom out
     //view.zoom(1.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
+
+    initButtons();
+    initDebugWindow();
     window.setView(view);
 }
 
-void Game::initButtons()
-{
-    // Initialize buttons and add them to the vector
-    buttons.emplace_back(100.0f,100.0f,150.0f,50.0f,&font,"button 1", sf::Color::Blue, sf::Color::Cyan, sf::Color::Magenta);
-    sf::FloatRect boundingBox = buttons[0].button.getGlobalBounds();
-    std::cout << "Bounding Box: " << boundingBox.left << ", " << boundingBox.top << ", " << boundingBox.width << ", " << boundingBox.height << std::endl;
-    std::cout << "button0 pos" << buttons[0].getPosition() << "\n";
-}
 
-void Game::initMap(size_t mapSize, sf::Vector2f nodeSize)
-{
-    float offset = nodeSize.x + 5.0f;
-    //map.emplace_back(1, 1, nodeSize, &font, std::to_string(1) + "," + std::to_string(1));
-    // for (size_t i = 0; i < mapSize; i++)
-    // {
-    //     for (size_t j = 0; j < mapSize; j++)
-    //     {
-    //         map.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j));
-    //     }
-        
-        
-    // }
 
-        for (size_t i = 0; i < mapSize; ++i) {
-        std::vector<Node> row;
-        for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j));
-        }
-        map.push_back(row);
-    }
-    
-}
 
 void Game::run() {
     sf::Clock clock;
@@ -208,4 +170,57 @@ void Game::render() {
     window.display();
 }
 
+// INIT STUFF
 
+void Game::initMap(size_t mapSize, sf::Vector2f nodeSize)
+{
+    float offset = nodeSize.x + 5.0f;
+    for (size_t i = 0; i < mapSize; ++i) {
+    std::vector<Node> row;
+    for (size_t j = 0; j < mapSize; ++j) {
+        row.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j),&texture);
+    }
+    map.push_back(row);
+    }
+    
+}
+
+int Game::initFonts()
+{
+    // intialize font
+    if (!font.loadFromFile("resources/arial.ttf")) {
+        std::cerr << "Error loading font\n";
+        return -1;
+    }
+    return 0;
+}
+
+int Game::initTextures()
+{
+    if (!texture.loadFromFile("resources/kuva.png")) {
+        // Handle loading error
+        std::cerr << "Error loading texture\n";
+        return -1;
+    }
+
+    return 0;
+}
+
+int Game::initDebugWindow()
+{
+    // Debug window init
+    debugOverlay.addTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
+    debugOverlay.addTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
+    debugOverlay.addTextField("Selected tile: ", nodeTypeToString(selectedHotkey));
+    debugOverlay.drawBackground(window);
+    return 0;
+}
+
+void Game::initButtons()
+{
+    // Initialize buttons and add them to the vector
+    buttons.emplace_back(100.0f,100.0f,150.0f,50.0f,&font,"button 1", sf::Color::Blue, sf::Color::Cyan, sf::Color::Magenta);
+    sf::FloatRect boundingBox = buttons[0].button.getGlobalBounds();
+    std::cout << "Bounding Box: " << boundingBox.left << ", " << boundingBox.top << ", " << boundingBox.width << ", " << boundingBox.height << std::endl;
+    std::cout << "button0 pos" << buttons[0].getPosition() << "\n";
+}

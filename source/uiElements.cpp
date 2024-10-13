@@ -84,16 +84,18 @@ bool Button::isPressed() const
     return false;
 }
 
-Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text) 
+Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture* texture) 
     {
     this->nodeState = NODE_EMPTY;
     this->font = font;
     this->position.x = x;
     this->position.y = y;
 
+ 
+
     this->node.setPosition(x,y);
     this->node.setSize(nodeSize);
-    
+    this->node.setTexture(texture);
     float fontsize = 32.0f;
     this->nodeText.setFont(*this->font);
     this->nodeText.setString(text);
