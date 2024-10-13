@@ -11,7 +11,7 @@ Game::Game()
     initFonts();
     initTextures();
     
-    initMap(7,sf::Vector2f(100,100));
+    initMap(5,sf::Vector2f(100,100),0.0f);
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -132,7 +132,7 @@ void Game::update(sf::Time totalElapsedTime) {
 }
 
 void Game::render() {
-    window.clear();
+    window.clear(sf::Color::Blue);
 
     // Test rectangle delete later
     sf::RectangleShape rectangle(sf::Vector2f(120.f, 50.f));
@@ -172,14 +172,15 @@ void Game::render() {
 
 // INIT STUFF
 
-void Game::initMap(size_t mapSize, sf::Vector2f nodeSize)
+void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset)
 {
-    float offset = nodeSize.x + 5.0f;
+    offset += nodeSize.x;
     for (size_t i = 0; i < mapSize; ++i) {
-    std::vector<Node> row;
-    for (size_t j = 0; j < mapSize; ++j) {
-        row.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j),&texture);
+        std::vector<Node> row;
+        for (size_t j = 0; j < mapSize; ++j) {
+            row.emplace_back(j*offset, i*offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j),&textures[0],&textures);
     }
+
     map.push_back(row);
     }
     
@@ -197,9 +198,18 @@ int Game::initFonts()
 
 int Game::initTextures()
 {
-    if (!texture.loadFromFile("resources/kuva.png")) {
+    // Ensure the vector has the correct size
+    textures.resize(2);
+
+    if (!textures[0].loadFromFile("resources/kuva.png")) {
         // Handle loading error
-        std::cerr << "Error loading texture\n";
+        std::cerr << "Error loading Kissa texture\n";
+        return -1;
+    }
+
+    if (!textures[1].loadFromFile("resources/wall_textures.png")) {
+        // Handle loading error
+        std::cerr << "Error loading SEINÄ texture\n";
         return -1;
     }
 

@@ -16,6 +16,20 @@ enum button_states{
     BTN_HOVER
     
 };
+
+enum TextureEnum{
+    WALL_VERTICAL = 0,
+    WALL_HORIZONTAL,
+    WALL_JUNCTION,
+    WALL_CORNER_BOTTOM_LEFT,
+    WALL_CORNER_BOTTOM_RIGHT,
+    WALL_CORNER_TOP_LEFT,
+    WALL_CORNER_TOP_RIGHT
+};
+enum TextureFileNames{
+    TEXTURE_KISSA = 0,
+    TEXTURE_WALL
+};
 sf::Color nodeTypeToColor(NodeType type);
 std::string nodeTypeToString(NodeType type);
 #endif // ENUMS_H

@@ -26,11 +26,11 @@ private:
 
     // init stuff
     void initButtons();
-    void initMap(size_t mapSize, sf::Vector2f nodeSize);
+    void initMap(size_t mapSize, sf::Vector2f nodeSize, float offset);
     int initFonts();
     int initTextures();
     int initDebugWindow();
-    sf::Texture texture;
+    std::vector<sf::Texture> textures;
     NodeType selectedHotkey = NODE_EMPTY;
     std::vector<Ball> balls;
     sf::Time totalElapsedTime;

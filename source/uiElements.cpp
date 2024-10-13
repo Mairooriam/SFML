@@ -84,38 +84,47 @@ bool Button::isPressed() const
     return false;
 }
 
-Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture* texture) 
-    {
+
+Node::Node(float x, float y, sf::Vector2f nodeSize, sf::Font* font, const std::string text, sf::Texture* initialTexture, std::vector<sf::Texture>* textures) {
     this->nodeState = NODE_EMPTY;
     this->font = font;
     this->position.x = x;
     this->position.y = y;
+    this->textures = textures;
 
- 
-
-    this->node.setPosition(x,y);
+    this->node.setPosition(x, y);
     this->node.setSize(nodeSize);
-    this->node.setTexture(texture);
+    this->node.setTexture(initialTexture); // Use pointer to sf::Texture
     float fontsize = 32.0f;
     this->nodeText.setFont(*this->font);
     this->nodeText.setString(text);
     this->nodeText.setFillColor(sf::Color::White);
     this->nodeText.setCharacterSize(fontsize);
-    
+
     this->nodeText.setPosition(
-        this->node.getPosition().x + (this->node.getSize().x / 2.0f) - (this->nodeText.getGlobalBounds().width / 2.0f) - fontsize/4,
-        this->node.getPosition().y + (this->node.getSize().y / 2.0f) - (this->nodeText.getGlobalBounds().height / 2.0f) - fontsize/4
+        this->node.getPosition().x + (this->node.getSize().x / 2.0f) - (this->nodeText.getGlobalBounds().width / 2.0f) - fontsize / 4,
+        this->node.getPosition().y + (this->node.getSize().y / 2.0f) - (this->nodeText.getGlobalBounds().height / 2.0f) - fontsize / 4
     );
-
-
-
 
     this->node.setFillColor(nodeTypeToColor(NODE_EMPTY));
     // Set other properties like font, color, etc.
 }
 
+
 void Node::handleEvent(const sf::Event& event) {
 
+}
+
+void Node::updateTexture(TextureFileNames textureName, TextureEnum texture) {
+    // Assuming 'textureName' is an index or identifier to access the correct texture
+    if (textureName < this->textures->size()) {
+        sf::Texture& chosenTexture = this->textures->at(textureName); // Access the texture from the vector
+        sf::Texture subTexture = this->selectTextureFromFile(chosenTexture, texture); // Get the sub-texture
+        this->node.setTexture(&chosenTexture); // Set the texture to the node
+    } else {
+        // Handle the case where the texture index is out of bounds
+        std::cerr << "Error: Texture index out of bounds\n";
+    }
 }
 
 int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
@@ -158,6 +167,7 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
         break;
     case NODE_WALL:
         this->node.setFillColor(nodeTypeToColor(NODE_WALL));
+        this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
         return NODE_WALL;
         break;
     case NODE_HOVER:
@@ -170,6 +180,31 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
         break;
     }
     return -1;
+}
+
+sf::Texture Node::selectTextureFromFile(sf::Texture & texture, TextureEnum textureName)
+{
+    sf::Texture subTexture;
+    sf::IntRect rect;
+
+    // Calculate the position of the sub-texture
+    int textureSize = 16;
+    int texturesPerRow = 128 / textureSize;
+    int x = (textureName % texturesPerRow) * textureSize;
+    int y = (textureName / texturesPerRow) * textureSize;
+    std::cout << "TEXTURE X:" << x << "TEXTURE Y:" << y << "\n";
+    rect.left = x;
+    rect.top = y;
+    rect.width = textureSize;
+    rect.height = textureSize;
+
+    // Load the sub-texture
+    if (subTexture.loadFromImage(texture.copyToImage(), rect)) {
+        return subTexture;
+    } else {
+        // Handle error (return an empty texture or throw an exception)
+        return sf::Texture();
+    }
 }
 
 

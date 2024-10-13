@@ -42,7 +42,7 @@ void DebugOverlay::drawBackground(sf::RenderWindow &window) {
     sf::RectangleShape background(sf::Vector2f(sizeX, sizeY));
     background.setFillColor(sf::Color(0, 0, 0, 150)); // Semi-transparent black background
     background.setPosition(0, 0);
-    std::cout << "drawing debug rect size:" << background.getSize().x << "x"<< background.getSize().y <<"\n";
+    //std::cout << "drawing debug rect size:" << background.getSize().x << "x"<< background.getSize().y <<"\n";
     window.draw(background);
 }
 
