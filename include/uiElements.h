@@ -45,8 +45,10 @@ public:
     
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
+    bool isWall() const;
     bool isNodeIgnored(NodeType type);
     void updateTexture(TextureEnum textureIndex);
+    void printNeighbours();
     sf::Texture selectTextureFromFile(sf::Texture & texture, TextureEnum textureName);
     std::string nodeTypeToString(NodeType);
     sf::Vector2f position;
@@ -54,8 +56,8 @@ public:
     NodeType nodeState;
     std::vector<sf::Texture>* textures;
     sf::Texture texture;
+    std::vector<Node*> neighbors;
 private:
-    
     sf::Font* font;
     sf::Text nodeText;
     sf::Color nodeColor;

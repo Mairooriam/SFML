@@ -73,6 +73,7 @@ void Game::processKeyPressed(sf::Event *event)
         switch (event->key.code) {
             case sf::Keyboard::Num1:
                 this->selectedHotkey = NODE_EMPTY;
+                
                 std::cout << "Button 1 pressed selected empty\n";
                 break;
             case sf::Keyboard::Num2:
@@ -85,6 +86,8 @@ void Game::processKeyPressed(sf::Event *event)
                 break;
             case sf::Keyboard::Num4:
                 this->selectedHotkey = NODE_WALL_1;
+                map[1][1].printNeighbours();
+                map[1][1].isWall();
                 std::cout << "Button 4 pressed, Selected WALL\n";
                 break;
             case sf::Keyboard::Num5:
@@ -124,13 +127,15 @@ void Game::update(sf::Time totalElapsedTime) {
     for (auto& button : buttons){
          button.update(mousePos);
     }
-
+   
     for (auto& row : map){
         for (auto& node : row){
             node.update(mousePos,  selectedHotkey);
+
             //std::cout << "Node: " << node.position.x << node.position.y << "\n";
         }
     }
+    
 
 }
 
@@ -186,22 +191,25 @@ void Game::render() {
 
 void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset)
 {
-    // // Create a texture and load a portion of the image
-    // sf::Texture temptexture;
-    // if (!temptexture.loadFromFile("resources/wall_textures.png")) {
-    //     std::cout << "Error loading texture portion\n";
-    // }
-
-  
-
     offset += nodeSize.x;
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            
             row.emplace_back(j * offset, i * offset, nodeSize, &font, std::to_string(i) + "," + std::to_string(j), this->textures[1], &textures);
         }
         map.push_back(row);
+    }
+
+    // Populate neighbors
+    for (size_t i = 0; i < mapSize; ++i) {
+        for (size_t j = 0; j < mapSize; ++j) {
+            Node& currentNode = map[i][j];
+            // Add neighbors (up, down, left, right)
+            if (i > 0) currentNode.neighbors.push_back(&map[i - 1][j]); // Up
+            if (i < mapSize - 1) currentNode.neighbors.push_back(&map[i + 1][j]); // Down
+            if (j > 0) currentNode.neighbors.push_back(&map[i][j - 1]); // Left
+            if (j < mapSize - 1) currentNode.neighbors.push_back(&map[i][j + 1]); // Right
+        }
     }
 }
 

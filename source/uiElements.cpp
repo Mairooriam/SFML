@@ -133,6 +133,14 @@ void Node::updateTexture(TextureEnum textureIndex) {
     node.setScale(6.4f,6.4f);
 }
 
+void Node::printNeighbours() {
+    std::cout << "Neighbours: ";
+    for (const auto& neighbour : this->neighbors) {
+        std::cout << "(" << neighbour->position.x << ", " << neighbour->position.y << ") ";
+    }
+    std::cout << std::endl;
+}
+
 int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     
    updateTexture(FLOOR_GREEN);
@@ -154,7 +162,7 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
         // PRESSED
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             this->nodeState = hotbarSelection;
-            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
+            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "And the node: " << this->isWall();"\n";
         }
     }
 
@@ -217,6 +225,7 @@ void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(this->nodeText);
 }
 
+// IS FUCNTIONS
 bool Node::isPressed() const
 {
     // if(this->nodeState == NODE_WALL){
@@ -224,7 +233,14 @@ bool Node::isPressed() const
     // }
     // return false;
 }
-
+bool Node::isWall() const{
+    if (this->nodeState == NODE_WALL_1){
+        std::cout << this->position.x << " " << this->position.y << " is wall"<< "\n";
+    }else{
+        std::cout << this->position.x << " " << this->position.y << " is not wall"<< "\n";
+    }
+    return true;
+}
 
 
 
