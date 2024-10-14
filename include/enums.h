@@ -6,10 +6,7 @@ enum NodeType{
     NODE_EMPTY = 0,
     NODE_PLAYER,
     NODE_ENEMY,
-    NODE_WALL_1,
-    NODE_WALL_2,
-    NODE_WALL_3,
-    NODE_WALL_4,
+    NODE_WALL,
     NODE_HOVER
 };
 

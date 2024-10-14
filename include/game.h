@@ -22,6 +22,7 @@ private:
     void processEvents();
     void processKeyPressed(sf::Event *event);
     void update(sf::Time totalElapsedTime);
+    void updateWalls();
     void render();
 
     // init stuff

@@ -1,4 +1,5 @@
 #include "uiElements.h"
+#include <bitset>
 
 
 Button::Button(float x, float y, float width, float height, sf::Font* font, const std::string text, 
@@ -133,13 +134,7 @@ void Node::updateTexture(TextureEnum textureIndex) {
     node.setScale(6.4f,6.4f);
 }
 
-void Node::printNeighbours() {
-    std::cout << "Neighbours: ";
-    for (const auto& neighbour : this->neighbors) {
-        std::cout << "(" << neighbour->position.x << ", " << neighbour->position.y << ") ";
-    }
-    std::cout << std::endl;
-}
+
 
 int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     
@@ -156,7 +151,7 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
             this->nodeState = NODE_HOVER;  
         }
         // add isvalid function or something
-        else if(nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL_1 && nodeState != NODE_WALL_2 && nodeState != NODE_WALL_3&& nodeState != NODE_WALL_4){
+        else if(nodeState != NODE_ENEMY && nodeState != NODE_PLAYER && nodeState != NODE_WALL){
             this->nodeState = NODE_HOVER;    
         }
         // PRESSED
@@ -180,29 +175,11 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
         this->node.setColor(nodeTypeToColor(NODE_ENEMY));
         return NODE_ENEMY;
         break;
-    case NODE_WALL_1:
+    case NODE_WALL:
         //this->node.setColor(nodeTypeToColor(NODE_WALL));
         //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
         updateTexture(WALL_CORNER_BOTTOM_LEFT);
-        return NODE_WALL_1;
-        break;
-    case NODE_WALL_2:
-        //this->node.setColor(nodeTypeToColor(NODE_WALL));
-        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
-        updateTexture(WALL_CORNER_BOTTOM_RIGHT);
-        return NODE_WALL_2;
-        break;
-    case NODE_WALL_3:
-        //this->node.setColor(nodeTypeToColor(NODE_WALL));
-        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
-        updateTexture(WALL_JUNCTION);
-        return NODE_WALL_3;
-        break;
-    case NODE_WALL_4:
-        //this->node.setColor(nodeTypeToColor(NODE_WALL));
-        //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
-        updateTexture(WALL_HORIZONTAL);
-        return NODE_WALL_4;
+        return NODE_WALL;
         break;
     case NODE_HOVER:
         this->node.setColor(nodeTypeToColor(NODE_HOVER));
@@ -217,14 +194,36 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     return -1;
 }
 
+void Node::updateWalls()
+{
 
-
+}
 
 void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     target.draw(this->node);
     target.draw(this->nodeText);
 }
 
+void Node::printNeighbours() {
+    std::cout << "Neighbours: ";
+    for (const auto& neighbour : this->neighbors) {
+        std::cout << "(" << neighbour->position.x << ", " << neighbour->position.y << ") ";
+    }
+    std::cout << std::endl;
+}
+
+int Node::areNeighboursWall()
+{
+    std::bitset<4> bitsetExample("0000");
+
+    for (size_t i = 0; i < neighbors.size(); ++i) {
+        if (neighbors[i]->isWall()) {
+            bitsetExample.set(i);
+        }
+    }
+    
+    return bitsetExample.to_ulong();
+}
 // IS FUCNTIONS
 bool Node::isPressed() const
 {
@@ -234,12 +233,14 @@ bool Node::isPressed() const
     // return false;
 }
 bool Node::isWall() const{
-    if (this->nodeState == NODE_WALL_1){
+    if (this->nodeState == NODE_WALL){
         std::cout << this->position.x << " " << this->position.y << " is wall"<< "\n";
+        return true;
     }else{
         std::cout << this->position.x << " " << this->position.y << " is not wall"<< "\n";
+        return false;
     }
-    return true;
+    
 }
 
 

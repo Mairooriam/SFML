@@ -42,13 +42,17 @@ public:
     
     void handleEvent(const sf::Event& event);
     int update(const sf::Vector2i& mousePos, NodeType hotbarSelection);
-    
+    void updateTexture(TextureEnum textureIndex);
+    void updateWalls();
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
     bool isWall() const;
     bool isNodeIgnored(NodeType type);
-    void updateTexture(TextureEnum textureIndex);
+    
     void printNeighbours();
+    int areNeighboursWall();
+
     sf::Texture selectTextureFromFile(sf::Texture & texture, TextureEnum textureName);
     std::string nodeTypeToString(NodeType);
     sf::Vector2f position;

@@ -11,7 +11,7 @@ Game::Game()
     initFonts();
     initTextures();
     
-    initMap(5,sf::Vector2f(100,100),0.0f);
+    initMap(3,sf::Vector2f(100,100),0.0f);
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -85,21 +85,23 @@ void Game::processKeyPressed(sf::Event *event)
                 std::cout << "Button 3 pressed Selected enemy\n";
                 break;
             case sf::Keyboard::Num4:
-                this->selectedHotkey = NODE_WALL_1;
-                map[1][1].printNeighbours();
-                map[1][1].isWall();
+                this->selectedHotkey = NODE_WALL;
+                //map[1][1].printNeighbours();
+                //map[1][1].isWall();
+                
+                std::cout << "NEIGHBOUR BITSET: \n"<< map[1][1].areNeighboursWall() << "\n";
                 std::cout << "Button 4 pressed, Selected WALL\n";
                 break;
             case sf::Keyboard::Num5:
-            this->selectedHotkey = NODE_WALL_2;
+                //this->selectedHotkey = NODE_WALL_2;
                 std::cout << "Button 5 pressed\n";
                 break;
             case sf::Keyboard::Num6:
-            this->selectedHotkey = NODE_WALL_3;
+                //this->selectedHotkey = NODE_WALL_3;
                 std::cout << "Button 6 pressed\n";
                 break;
             case sf::Keyboard::Num7:
-                this->selectedHotkey = NODE_WALL_4;
+                //this->selectedHotkey = NODE_WALL_4;
                 std::cout << "Button 7 pressed\n";
                 break;
             case sf::Keyboard::Num8:
@@ -131,13 +133,20 @@ void Game::update(sf::Time totalElapsedTime) {
     for (auto& row : map){
         for (auto& node : row){
             node.update(mousePos,  selectedHotkey);
-
-            //std::cout << "Node: " << node.position.x << node.position.y << "\n";
         }
     }
     
 
 }
+void Game::updateWalls()
+{
+    for (auto& row : map){
+        for (auto& node : row){
+            std::cout << "NEIGHBOUR BITSET: "<<node.areNeighboursWall() << "\n";
+        }
+    }
+}
+
 
 void Game::render() {
     window.clear(sf::Color::Blue);
