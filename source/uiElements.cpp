@@ -194,9 +194,46 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     return -1;
 }
 
-void Node::updateWalls()
+void Node::updateWallTextureAccordingToNeighbours(int wallCheckResult)
 {
-
+    switch (wallCheckResult)
+    {
+    // SINGLE WALL ON ANY SIDE
+    case 1:
+        // WALL AT TOP
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 2:
+        // WALL AT BOTTOM
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 3:
+        // WALL AT BOTTOM
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 4:
+        // WALL AT LEFT
+        this->updateTexture(WALL_HORIZONTAL);
+        break;
+    case 8:
+        // WALL AT RIGHT
+        this->updateTexture(WALL_HORIZONTAL);
+        break;
+    case 10:
+        // WALL AT RIGHT AND BOTTOM
+        this->updateTexture(WALL_CORNER_TOP_LEFT);
+        break;
+    case 5:
+        // WALL AT LEFT AND TOP
+        this->updateTexture(WALL_CORNER_BOTTOM_RIGHT);
+        break;
+    case 15:
+        // WALL AT EACH SIDE
+        this->updateTexture(WALL_JUNCTION);
+        break;
+    default:
+        break;
+    }
 }
 
 void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
@@ -234,10 +271,10 @@ bool Node::isPressed() const
 }
 bool Node::isWall() const{
     if (this->nodeState == NODE_WALL){
-        std::cout << this->position.x << " " << this->position.y << " is wall"<< "\n";
+        //std::cout << this->position.x << " " << this->position.y << " is wall"<< "\n";
         return true;
     }else{
-        std::cout << this->position.x << " " << this->position.y << " is not wall"<< "\n";
+        //std::cout << this->position.x << " " << this->position.y << " is not wall"<< "\n";
         return false;
     }
     

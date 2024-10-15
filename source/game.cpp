@@ -129,20 +129,28 @@ void Game::update(sf::Time totalElapsedTime) {
     for (auto& button : buttons){
          button.update(mousePos);
     }
-   
+    
     for (auto& row : map){
         for (auto& node : row){
             node.update(mousePos,  selectedHotkey);
+
         }
     }
-    
+    int checkResult = map[1][1].areNeighboursWall();
+    if ( checkResult != 0){
+        std::cout << "neikbour checkresult " << checkResult << "\n";
+        map[1][1].updateWallTextureAccordingToNeighbours(checkResult);
+    }
 
 }
 void Game::updateWalls()
 {
     for (auto& row : map){
         for (auto& node : row){
-            std::cout << "NEIGHBOUR BITSET: "<<node.areNeighboursWall() << "\n";
+            int checkResult = node.areNeighboursWall();
+            if ( checkResult != 0){
+                node.updateWallTextureAccordingToNeighbours(checkResult);
+            }
         }
     }
 }

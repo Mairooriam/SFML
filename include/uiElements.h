@@ -43,7 +43,7 @@ public:
     void handleEvent(const sf::Event& event);
     int update(const sf::Vector2i& mousePos, NodeType hotbarSelection);
     void updateTexture(TextureEnum textureIndex);
-    void updateWalls();
+    void updateWallTextureAccordingToNeighbours(int areNeighbourswall);
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     bool isPressed() const;
