@@ -1,5 +1,5 @@
 #include "Game.h"
-
+#include "debug.h"
 #include <iostream>
 #include "vectorOperators.h"
 
@@ -10,8 +10,11 @@ Game::Game()
     {
     initFonts();
     initTextures();
+    {
+        Timer timer("INIT MAP DURATION");
+        initMap(30,sf::Vector2f(100,100),0.0f);
+    }
     
-    initMap(10,sf::Vector2f(100,100),0.0f);
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -20,9 +23,12 @@ Game::Game()
     }
     // Instead of setting the size, use zoom to zoom out
     //view.zoom(1.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
-
-    initButtons();
-    initDebugWindow();
+    {
+        Timer timer("INIT BUTTONS & DEBUGWINDOW DURATION");
+        initButtons();
+        initDebugWindow();
+    }
+    
     window.setView(view);
 }
 
@@ -42,8 +48,10 @@ void Game::run() {
             mousePos = sf::Mouse::getPosition(window);
             timeSinceLastUpdate -= TimePerFrame;
             processEvents();
-            
+            {
+            //Timer timer("ONE UPDATE CYCLE");
             update(totalElapsedTime);
+            }
         }
 
         render();
@@ -120,6 +128,7 @@ void Game::update(sf::Time totalElapsedTime) {
     debugOverlay.updateTextField("Time Elapsed: ", std::to_string(totalElapsedTime.asSeconds()));
     debugOverlay.updateTextField("Ball 1 x: ", std::to_string(balls[0].position.x) + "Y: " + std::to_string(balls[0].position.y) + "Z: " + std::to_string(balls[0].position.z));
     debugOverlay.updateTextField("Selected tile: ", nodeTypeToString(selectedHotkey));
+   
     for (auto& ball : balls) {
         if(!ball.update(totalElapsedTime.asSeconds())){
             totalElapsedTime = sf::seconds(0);
