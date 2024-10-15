@@ -128,10 +128,16 @@ void Node::handleEvent(const sf::Event& event) {
 }
 
 void Node::updateTexture(TextureEnum textureIndex) {
+    // int y = textureIndex % 8;
+    // node.setTexture(this->texture);
+    // node.setTextureRect(sf::IntRect(textureIndex*16,y,16,16));
+    // node.setScale(6.4f,6.4f);
+    int x = textureIndex % 8; // Column index
+    int y = textureIndex / 8; // Row index
 
     node.setTexture(this->texture);
-    node.setTextureRect(sf::IntRect(textureIndex*16,0,16,16));
-    node.setScale(6.4f,6.4f);
+    node.setTextureRect(sf::IntRect(x * 16, y * 16, 16, 16));
+    node.setScale(6.4f, 6.4f);
 }
 
 
@@ -157,7 +163,7 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
         // PRESSED
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             this->nodeState = hotbarSelection;
-            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "And the node: " << this->isWall();"\n";
+            std::cout << "Pressed: " << nodeText.getString().toAnsiString() << "\n";
         }
     }
 
@@ -178,7 +184,7 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     case NODE_WALL:
         //this->node.setColor(nodeTypeToColor(NODE_WALL));
         //this->updateTexture(TEXTURE_WALL,WALL_JUNCTION);
-        updateTexture(WALL_CORNER_BOTTOM_LEFT);
+        updateTexture(WALL_LONELY);
         return NODE_WALL;
         break;
     case NODE_HOVER:
@@ -219,6 +225,11 @@ void Node::updateWallTextureAccordingToNeighbours(int wallCheckResult)
         // WALL AT RIGHT
         this->updateTexture(WALL_HORIZONTAL);
         break;
+    case 9:
+        // WALL AT RIGHT
+        this->updateTexture(WALL_CORNER_BOTTOM_LEFT);
+        break;
+    
     case 10:
         // WALL AT RIGHT AND BOTTOM
         this->updateTexture(WALL_CORNER_TOP_LEFT);
@@ -227,6 +238,30 @@ void Node::updateWallTextureAccordingToNeighbours(int wallCheckResult)
         // WALL AT LEFT AND TOP
         this->updateTexture(WALL_CORNER_BOTTOM_RIGHT);
         break;
+    case 11:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_JUNCTION_TOP_RIGHT_BOTTOM);
+        break;    
+     case 12:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_HORIZONTAL);
+        break;   
+    case 13:
+        // WALL LEFT TOP RIGHT
+        this->updateTexture(WALL_JUNCTION_LEFT_TOP_RIGHT);
+        break;
+    case 14:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_JUNCTION_LEFT_BOTTOM_RIGHT);
+        break; 
+    case 7:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_JUNCTION_TOP_LEFT_BOTTOM);
+    break;
+    case 6:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_CORNER_TOP_RIGHT);
+    break;        
     case 15:
         // WALL AT EACH SIDE
         this->updateTexture(WALL_JUNCTION);
@@ -242,23 +277,49 @@ void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 }
 
 void Node::printNeighbours() {
-    std::cout << "Neighbours: ";
-    for (const auto& neighbour : this->neighbors) {
-        std::cout << "(" << neighbour->position.x << ", " << neighbour->position.y << ") ";
-    }
-    std::cout << std::endl;
+    std::cout << "Neighbours of : " <<position.x << "," << position.y << "\n";
+    // for (const auto& neighbour : this->neighbors) {
+    //     if (neighbour != nullptr){
+    //         std::cout << "(" << neighbour->position.x << ", " << neighbour->position.y << ") \n";
+    //     }else{
+    //         std::cout << "(" << position.x << ", " << position.y << ") HAS NO NEIGHBOUR HERE. \n";
+    //     }
+        
+    // }
+    
+    //TOP
+    if(this->neighbors[0] != nullptr)
+        std::cout << "TOP   (" << this->neighbors[0]->position.x << ", " << this->neighbors[0]->position.y << ") \n"; 
+    else
+        std::cout << "TOP   (nullptr) \n";
+
+    if(this->neighbors[1] != nullptr)
+        std::cout << "BOT   (" << this->neighbors[1]->position.x << ", " << this->neighbors[1]->position.y << ") \n";
+    else
+        std::cout << "BOT   (nullptr) \n";
+
+    if(this->neighbors[2] != nullptr)
+        std::cout << "LEFT  (" << this->neighbors[2]->position.x << ", " << this->neighbors[2]->position.y << ") \n"; 
+    else
+        std::cout << "LEFT  (nullptr) \n";
+
+    if(this->neighbors[3] != nullptr)
+        std::cout << "RIGHT (" << this->neighbors[3]->position.x << ", " << this->neighbors[3]->position.y << ") \n";
+    else
+        std::cout << "RIGHT (nullptr) \n";
 }
 
 int Node::areNeighboursWall()
 {
     std::bitset<4> bitsetExample("0000");
 
-    for (size_t i = 0; i < neighbors.size(); ++i) {
-        if (neighbors[i]->isWall()) {
-            bitsetExample.set(i);
-        }
+    for (size_t i = 0; i < 4; ++i) {
+        if (this->neighbors[i] != nullptr)
+            if (this->neighbors[i]->isWall()) {
+                bitsetExample.set(i);
+            }
     }
-    
+    //std::cout <<"im in NODE. Bitset printed: "<< bitsetExample << "\n";
     return bitsetExample.to_ulong();
 }
 // IS FUCNTIONS

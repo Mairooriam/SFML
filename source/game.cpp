@@ -11,7 +11,7 @@ Game::Game()
     initFonts();
     initTextures();
     
-    initMap(3,sf::Vector2f(100,100),0.0f);
+    initMap(10,sf::Vector2f(100,100),0.0f);
     // creating balls and initial values for them
     const sf::Vector3f initialVelocity(0.0f, 0.0f, 0.0f);
     sf::Vector3f position(0.0f, 0.0f,0.0f);
@@ -88,7 +88,7 @@ void Game::processKeyPressed(sf::Event *event)
                 this->selectedHotkey = NODE_WALL;
                 //map[1][1].printNeighbours();
                 //map[1][1].isWall();
-                
+                map[1][1].printNeighbours();
                 std::cout << "NEIGHBOUR BITSET: \n"<< map[1][1].areNeighboursWall() << "\n";
                 std::cout << "Button 4 pressed, Selected WALL\n";
                 break;
@@ -128,27 +128,42 @@ void Game::update(sf::Time totalElapsedTime) {
 
     for (auto& button : buttons){
          button.update(mousePos);
-    }
-    
+    };
+
+    int checkNeighbourResult;
     for (auto& row : map){
         for (auto& node : row){
-            node.update(mousePos,  selectedHotkey);
+            int updateResult = node.update(mousePos,  selectedHotkey);
+            switch (updateResult)
+            {
+                case NODE_WALL:
+                    checkNeighbourResult = node.areNeighboursWall();
+                    if ( checkNeighbourResult != 0 & node.isWall()){
+                        //std::cout << "neikbour checkresult " << checkResult << "\n";
+                        node.updateWallTextureAccordingToNeighbours(checkNeighbourResult);
+                    }
+                    break;
+                
+                default:
+                    break;
+            }
+            
 
         }
     }
-    int checkResult = map[1][1].areNeighboursWall();
-    if ( checkResult != 0){
-        std::cout << "neikbour checkresult " << checkResult << "\n";
-        map[1][1].updateWallTextureAccordingToNeighbours(checkResult);
-    }
-
+    // DEBUG FOR SINGLE NODE.
+    // int checkResult = map[1][1].areNeighboursWall();
+    // if ( checkResult != 0){
+    //     //std::cout << "neikbour checkresult " << checkResult << "\n";
+    //     map[1][1].updateWallTextureAccordingToNeighbours(checkResult);
+    // }
 }
 void Game::updateWalls()
 {
     for (auto& row : map){
         for (auto& node : row){
             int checkResult = node.areNeighboursWall();
-            if ( checkResult != 0){
+            if ( checkResult != 0 & node.isWall()){
                 node.updateWallTextureAccordingToNeighbours(checkResult);
             }
         }
@@ -217,15 +232,28 @@ void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset)
         map.push_back(row);
     }
 
+    // old
+    // Populate neighbors
+    // for (size_t i = 0; i < mapSize; ++i) {
+    //     for (size_t j = 0; j < mapSize; ++j) {
+    //         Node& currentNode = map[i][j];
+    //         // Add neighbors (up, down, left, right)
+    //         if (i > 0) currentNode.neighbors.push_back(&map[i - 1][j]); // Up
+    //         if (i < mapSize - 1) currentNode.neighbors.push_back(&map[i + 1][j]); // Down
+    //         if (j > 0) currentNode.neighbors.push_back(&map[i][j - 1]); // Left
+    //         if (j < mapSize - 1) currentNode.neighbors.push_back(&map[i][j + 1]); // Right
+    //     }
+    // }
+
     // Populate neighbors
     for (size_t i = 0; i < mapSize; ++i) {
         for (size_t j = 0; j < mapSize; ++j) {
             Node& currentNode = map[i][j];
             // Add neighbors (up, down, left, right)
-            if (i > 0) currentNode.neighbors.push_back(&map[i - 1][j]); // Up
-            if (i < mapSize - 1) currentNode.neighbors.push_back(&map[i + 1][j]); // Down
-            if (j > 0) currentNode.neighbors.push_back(&map[i][j - 1]); // Left
-            if (j < mapSize - 1) currentNode.neighbors.push_back(&map[i][j + 1]); // Right
+            currentNode.neighbors.push_back((i > 0) ? &map[i - 1][j] : nullptr); // Up
+            currentNode.neighbors.push_back((i < mapSize - 1) ? &map[i + 1][j] : nullptr); // Down
+            currentNode.neighbors.push_back((j > 0) ? &map[i][j - 1] : nullptr); // Left
+            currentNode.neighbors.push_back((j < mapSize - 1) ? &map[i][j + 1] : nullptr); // Right
         }
     }
 }

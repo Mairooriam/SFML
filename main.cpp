@@ -15,6 +15,8 @@ int main() {
     Game game;
     game.run();
     return 0;
+
+
     // std::bitset<4> bitsetExample("0010");
 
     // // Print the entire bitset
