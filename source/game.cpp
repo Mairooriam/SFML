@@ -1,8 +1,8 @@
 #include "Game.h"
-#include "debug.h"
+
 #include <iostream>
 #include "vectorOperators.h"
-
+#include "debug.h"
 
 Game::Game()
     : window(sf::VideoMode(800, 600), "SFML Window with Shape"),
@@ -11,8 +11,8 @@ Game::Game()
     initFonts();
     initTextures();
     {
-        Timer timer("INIT MAP DURATION");
-        initMap(30,sf::Vector2f(100,100),0.0f);
+        //Timer timer("INIT MAP DURATION");
+        initMap(20,sf::Vector2f(100,100),0.0f);
     }
     
     // creating balls and initial values for them
@@ -24,7 +24,7 @@ Game::Game()
     // Instead of setting the size, use zoom to zoom out
     //view.zoom(1.0f); // Zoom out by a factor of 2 (0.5 means zoom out)
     {
-        Timer timer("INIT BUTTONS & DEBUGWINDOW DURATION");
+        //Timer timer("INIT BUTTONS & DEBUGWINDOW DURATION");
         initButtons();
         initDebugWindow();
     }
@@ -38,8 +38,8 @@ Game::Game()
 void Game::run() {
     sf::Clock clock;
     sf::Time timeSinceLastUpdate = sf::Time::Zero;
-    const sf::Time TimePerFrame = sf::seconds(1.0f / 60.0f);
-    //const sf::Time TimePerFrame = sf::seconds(1.0f);
+    //const sf::Time TimePerFrame = sf::seconds(1.0f / 60.0f);
+    const sf::Time TimePerFrame = sf::seconds(1.0f);
     while (window.isOpen()) {
         sf::Time deltaTime = clock.restart();
         timeSinceLastUpdate += deltaTime;
@@ -49,8 +49,17 @@ void Game::run() {
             timeSinceLastUpdate -= TimePerFrame;
             processEvents();
             {
-            //Timer timer("ONE UPDATE CYCLE");
+            Timer timer("ONE UPDATE CYCLE");
+
+            // Track memory usage before update
+            size_t memoryBefore = MemoryTracker::getTotalAllocatedMemory();
             update(totalElapsedTime);
+
+            // Track memory usage after update
+            size_t memoryAfter = MemoryTracker::getTotalAllocatedMemory();
+
+            std::cout << "Memory used by update: " << (memoryAfter - memoryBefore) << " bytes" << std::endl;
+        
             }
         }
 
@@ -265,6 +274,8 @@ void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset)
             currentNode.neighbors.push_back((j < mapSize - 1) ? &map[i][j + 1] : nullptr); // Right
         }
     }
+    MemoryTracker::trackAllocation(&map,sizeof(map));
+    MemoryTracker::trackAllocation(&map[0][0].neighbors,sizeof(map[0][0].neighbors));
 }
 
 int Game::initFonts()

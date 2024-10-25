@@ -70,9 +70,11 @@ int Button::update(const sf::Vector2i& mousePos) {
         break;
     }
     return -1;
+    
 }
 
 void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    
     target.draw(this->button);
     target.draw(this->buttonText);
 }
@@ -128,6 +130,7 @@ void Node::handleEvent(const sf::Event& event) {
 }
 
 void Node::updateTexture(TextureEnum textureIndex) {
+    
     // int y = textureIndex % 8;
     // node.setTexture(this->texture);
     // node.setTextureRect(sf::IntRect(textureIndex*16,y,16,16));
@@ -143,7 +146,9 @@ void Node::updateTexture(TextureEnum textureIndex) {
 
 
 int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
-    
+   
+   
+   
    updateTexture(FLOOR_GREEN);
     //IDLE
     if (nodeState == NODE_HOVER){
@@ -198,10 +203,12 @@ int Node::update(const sf::Vector2i& mousePos, NodeType hotbarSelection) {
     }
 
     return -1;
+   
 }
 
 void Node::updateWallTextureAccordingToNeighbours(int wallCheckResult)
 {
+    
     switch (wallCheckResult)
     {
     // SINGLE WALL ON ANY SIDE
@@ -272,6 +279,7 @@ void Node::updateWallTextureAccordingToNeighbours(int wallCheckResult)
 }
 
 void Node::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+    
     target.draw(this->node);
     target.draw(this->nodeText);
 }

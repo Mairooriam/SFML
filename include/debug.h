@@ -20,7 +20,7 @@ public:
     void stop() {
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration_micro = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
-        auto duration_milli = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+        auto duration_milli = std::chrono::duration_cast<std::chrono::duration<float, std::milli>>(end_time - start_time).count();
 
         std::cout << message << " Duration: " << duration_micro << " microseconds (" << duration_milli << " milliseconds)" << std::endl;
     }
@@ -66,6 +66,14 @@ public:
         }
     }
 
+    static size_t getTotalAllocatedMemory() {
+    size_t total = 0;
+    for (const auto& alloc : allocations) {
+        total += alloc.size;
+    }
+    return total;
+    }
+
 private:
     struct Allocation {
         void* ptr;
@@ -75,6 +83,30 @@ private:
     static std::vector<Allocation> allocations;
 };
 
+// Define the static member variable
 std::vector<MemoryTracker::Allocation> MemoryTracker::allocations;
+
+// Custom new and delete operators
+// void* operator new(size_t size) {
+//     void* ptr = malloc(size);
+//     MemoryTracker::trackAllocation(ptr, size);
+//     return ptr;
+// }
+
+// void operator delete(void* ptr) noexcept {
+//     MemoryTracker::trackDeallocation(ptr);
+//     free(ptr);
+// }
+
+// void* operator new[](size_t size) {
+//     void* ptr = malloc(size);
+//     MemoryTracker::trackAllocation(ptr, size);
+//     return ptr;
+// }
+
+// void operator delete[](void* ptr) noexcept {
+//     MemoryTracker::trackDeallocation(ptr);
+//     free(ptr);
+// }
 
 #endif // DEBUG_H
