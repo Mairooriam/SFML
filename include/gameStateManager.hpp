@@ -5,14 +5,14 @@
 #include <memory>
 #include <stack>
 #include <iostream>
-
+#include "node.hpp"
 // Forward declaration of the Game class
 class Game;
 
 class GameState {
 public:
     
-    virtual void handleEvent(sf::Event& event) = 0;
+    virtual void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) = 0;
     virtual void update(sf::Time deltaTime) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
     virtual ~GameState() = default;
@@ -53,7 +53,7 @@ public:
      * @brief Handles an event by passing it to the current state.
      * @param event The event to be handled.
      */
-    void handleEvent(sf::Event& event);
+    void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget);
 
     /**
      * @brief Updates the current state with the given delta time.
@@ -74,7 +74,7 @@ public:
         // Nested State Classes
     class IntroState : public GameState {
     public:
-        void handleEvent(sf::Event& event) override;
+        void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) override;
         void update(sf::Time deltaTime) override;
         void render(sf::RenderWindow& window) override;
     };
@@ -82,7 +82,7 @@ public:
     class MenuState : public GameState {
     public:
         MenuState(GameStateManager& manager) : manager(manager) {}
-        void handleEvent(sf::Event& event) override;
+        void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) override;
         void update(sf::Time deltaTime) override;
         void render(sf::RenderWindow& window) override;
     private:
@@ -94,7 +94,7 @@ public:
     class PlayState : public GameState {
     public:
         PlayState(GameStateManager& manager) : manager(manager) {}
-        void handleEvent(sf::Event& event) override;
+        void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) override;
         void update(sf::Time deltaTime) override;
         void render(sf::RenderWindow& window) override;
     private:

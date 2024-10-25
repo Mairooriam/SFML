@@ -17,7 +17,7 @@ static Game& getInstance() {
     void drawMap();
     std::vector<std::vector<Node>> map;
 private:
-    void processEvents();
+    Node& checkMouseCollisions();
     void update();
     void render();
     void initMap(size_t mapSize, sf::Vector2f nodeSize, float offset);

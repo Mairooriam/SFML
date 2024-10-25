@@ -25,6 +25,11 @@ void Node::printNodeInfo()
               << std::endl;
 }
 
+sf::FloatRect Node::getGlobalBounds() const
+{
+    return this->Sprite.getGlobalBounds();
+}
+
 void Node::setSprite(sf::Sprite sprite)
 {
     this->Sprite = sprite;

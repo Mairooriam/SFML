@@ -36,9 +36,9 @@ GameState* GameStateManager::getCurrentState() {
     return states.top().get();
 }
 
-void GameStateManager::handleEvent(sf::Event& event) {
+void GameStateManager::handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) {
     if (!states.empty()) {
-        states.top()->handleEvent(event);
+        states.top()->handleEvent(event, window, collisionTarget);
     }
 }
 
@@ -55,7 +55,7 @@ void GameStateManager::render(sf::RenderWindow& window) {
 }
 
 // MenuState Methods
-void GameStateManager::MenuState::handleEvent(sf::Event& event) {
+void GameStateManager::MenuState::handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) {
     if (event.type == sf::Event::KeyPressed) {
         debugPrint("MenuState: Key Pressed");
         if (event.key.code == sf::Keyboard::Escape) {
@@ -75,7 +75,7 @@ void GameStateManager::MenuState::render(sf::RenderWindow& window) {
 }
 
 // PlayState Methods
-void GameStateManager::PlayState::handleEvent(sf::Event& event) {
+void GameStateManager::PlayState::handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) {
     if (event.type == sf::Event::KeyPressed) {
         debugPrint("PlayState: Key Pressed");
         if (event.key.code == sf::Keyboard::Escape) {
@@ -85,6 +85,12 @@ void GameStateManager::PlayState::handleEvent(sf::Event& event) {
             manager.changeState(std::make_unique<GameStateManager::MenuState>(manager));
         }
     }
+    
+    if(event.type == sf::Event::MouseButtonReleased){
+        ResourceManager& resourceManager = ResourceManager::getInstance();
+        collisionTarget.setSprite(resourceManager.createSprite16x16("wall_textures",WALL_JUNCTION_LEFT_BOTTOM_RIGHT));
+    }
+
 }
 
 void GameStateManager::PlayState::update(sf::Time deltaTime) {
