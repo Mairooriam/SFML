@@ -1,19 +1,43 @@
-#include "Game.h"
+//#include "Game.h"
 #include <SFML/Graphics/Font.hpp>
 #include <vector>
 #include <bitset>
-#include "enums.h"
+//#include "enums.h"
+#include "resourceManager.hpp"
+#include "gameStateManager.hpp"
 
-// bool getWallTypeAccordingToNeighbourds(const std::vector<bool>& boolArray) {
 
-// }
 
 int main() {
-   
 
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Game");
+    GameStateManager stateManager;
+    // Initialize ResourceManager
+    ResourceManager& resourceManager = ResourceManager::getInstance();
+    // Enable debug printing
+    GameStateManager::enableDebug();
 
-    Game game;
-    game.run();
+    stateManager.pushState(std::make_unique<GameStateManager::MenuState>(stateManager));
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+            stateManager.handleEvent(event);
+        }
+
+        stateManager.update(sf::seconds(1.f / 60.f));
+
+        window.clear();
+        stateManager.render(window);
+        window.display();
+    }
+
+ 
+    // Game game;
+    // game.run();
     return 0;
 
 
