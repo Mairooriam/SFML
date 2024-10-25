@@ -36,15 +36,15 @@ public:
 
     // Creates sprite of supplied texture and index
     sf::Sprite createSprite16x16(const std::string& textureName, const WallTextureType texture);
-    
+    // Retrieve a font by name
+    sf::Font& getFont(const std::string& name);
 private:
     ResourceManager();
     // returns intRect according to index and texture dimensions.
     sf::IntRect getTextureRect(const WallTextureType textureEnum, const int size, const int rows, const int columns);
     // Retrieve a texture by name
     sf::Texture& getTexture(const std::string& name);
-    // Retrieve a font by name
-    sf::Texture& getFont(const std::string& name);
+    
     // Load a texture from a file and store it with a given name
     void loadTexture(const std::string& name, const std::string& filename);
     // Load a Font from a file and store it with given name

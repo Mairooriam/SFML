@@ -5,8 +5,13 @@
 #include <memory>
 #include <stack>
 #include <iostream>
+
+// Forward declaration of the Game class
+class Game;
+
 class GameState {
 public:
+    
     virtual void handleEvent(sf::Event& event) = 0;
     virtual void update(sf::Time deltaTime) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
@@ -15,6 +20,7 @@ public:
 
 class GameStateManager {
 public:
+    GameStateManager(Game& game); // Constructor accepting a pointer to Game
     /**
      * @class GameStateManager
      * @brief Manages the stack of game states, allowing for pushing, popping, and changing states.
@@ -81,6 +87,8 @@ public:
         void render(sf::RenderWindow& window) override;
     private:
         GameStateManager& manager;
+        Game& getGame() { return manager.getGame(); }
+       
     };
 
     class PlayState : public GameState {
@@ -91,8 +99,12 @@ public:
         void render(sf::RenderWindow& window) override;
     private:
         GameStateManager& manager;
+        Game& getGame() { return manager.getGame(); }
+        
     };
+    Game& getGame() { return game; }
 private:
+    Game& game; // Pointer to the Game class
     /**
      * @brief A stack of unique pointers to game states.
      */

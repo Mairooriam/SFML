@@ -34,6 +34,15 @@ sf::Texture &ResourceManager::getTexture(const std::string &name)
     return it->second;
 }
 
+sf::Font &ResourceManager::getFont(const std::string &name)
+{
+    auto it = fonts.find(name);
+    if (it == fonts.end()) {
+        throw std::runtime_error("Font not found: " + name);
+    }
+    return it->second;
+}
+
 sf::Sprite ResourceManager::createSprite16x16(const std::string &textureName, const WallTextureType textureEnum)
 {
     

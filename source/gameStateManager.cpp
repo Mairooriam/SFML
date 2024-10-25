@@ -1,7 +1,12 @@
 #include "gameStateManager.hpp"
+#include "game.hpp" // Include the header file for the Game class
 
+#include "resourceManager.hpp" // Include the resource manager header
 // Initialize the debug flag
 bool GameStateManager::debugEnabled = false;
+
+// Constructor accepting a pointer to Game
+GameStateManager::GameStateManager(Game& game) : game(game) {}
 
 // GameStateManager Methods
 void GameStateManager::pushState(std::unique_ptr<GameState> state) {
@@ -75,6 +80,8 @@ void GameStateManager::PlayState::handleEvent(sf::Event& event) {
         debugPrint("PlayState: Key Pressed");
         if (event.key.code == sf::Keyboard::Escape) {
             debugPrint("PlayState: Switching to MenuState");
+            Game& game = getGame();
+            game.printMap();
             manager.changeState(std::make_unique<GameStateManager::MenuState>(manager));
         }
     }
@@ -84,17 +91,15 @@ void GameStateManager::PlayState::update(sf::Time deltaTime) {
     // Update logic here
 }
 
-#include "resourceManager.hpp" // Include the resource manager header
 
 void GameStateManager::PlayState::render(sf::RenderWindow& window) {
     window.clear(sf::Color::Green);
     
-    // Example usage of ResourceManager to load and draw a texture
-    // Example usage of ResourceManager to load and draw a texture
-    ResourceManager& resourceManager = ResourceManager::getInstance();
-    sf::Sprite sprite = resourceManager.createSprite16x16("wall_textures", WALL_CORNER_BOTTOM_RIGHT);
-    sprite.setScale(10,10);
-    window.draw(sprite);
+    Game& game = getGame();
+    game.drawMap();
+   
     
-    // Add more rendering code here
+
+    
+    
 }
