@@ -12,7 +12,8 @@ class Game;
 class GameState {
 public:
     
-    virtual void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) = 0;
+    virtual void handleEvent(sf::Event& event) = 0;
+    virtual void handleMouseEvent(sf::Event& event) = 0;
     virtual void update(sf::Time deltaTime) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
     virtual ~GameState() = default;
@@ -20,7 +21,7 @@ public:
 
 class GameStateManager {
 public:
-    GameStateManager(Game& game); // Constructor accepting a pointer to Game
+    GameStateManager(Game& game, sf::RenderWindow& window); // Constructor accepting a pointer to Game
     /**
      * @class GameStateManager
      * @brief Manages the stack of game states, allowing for pushing, popping, and changing states.
@@ -53,8 +54,12 @@ public:
      * @brief Handles an event by passing it to the current state.
      * @param event The event to be handled.
      */
-    void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget);
-
+    void handleEvent(sf::Event& event);
+     /**
+     * @brief Handles an event by passing it to the current state.
+     * @param event The event to be handled.
+     */
+    void handleMouseEvent(sf::Event& event);
     /**
      * @brief Updates the current state with the given delta time.
      * @param deltaTime The time elapsed since the last update.
@@ -71,40 +76,36 @@ public:
     static void enableDebug() { debugEnabled = true; }
     static void disableDebug() { debugEnabled = false; }
 
-        // Nested State Classes
-    class IntroState : public GameState {
-    public:
-        void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) override;
-        void update(sf::Time deltaTime) override;
-        void render(sf::RenderWindow& window) override;
-    };
-
     class MenuState : public GameState {
     public:
         MenuState(GameStateManager& manager) : manager(manager) {}
-        void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) override;
+        void handleEvent(sf::Event& event) override;
+        void handleMouseEvent(sf::Event& event) override;
         void update(sf::Time deltaTime) override;
         void render(sf::RenderWindow& window) override;
     private:
         GameStateManager& manager;
         Game& getGame() { return manager.getGame(); }
-       
+        sf::RenderWindow& getRenderWindow() { return manager.getRenderWindow(); }
     };
 
     class PlayState : public GameState {
     public:
         PlayState(GameStateManager& manager) : manager(manager) {}
-        void handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) override;
+        void handleEvent(sf::Event& event) override;
+        void handleMouseEvent(sf::Event& event) override;
         void update(sf::Time deltaTime) override;
         void render(sf::RenderWindow& window) override;
     private:
         GameStateManager& manager;
         Game& getGame() { return manager.getGame(); }
-        
+        sf::RenderWindow& getRenderWindow() { return manager.getRenderWindow(); }
     };
     Game& getGame() { return game; }
+    sf::RenderWindow& getRenderWindow() { return window; }
 private:
     Game& game; // Pointer to the Game class
+    sf::RenderWindow& window;
     /**
      * @brief A stack of unique pointers to game states.
      */

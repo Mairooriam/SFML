@@ -1,42 +1,29 @@
 #include "game.hpp"
-Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"), stateManager(*this) {
+Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"), gameStateManager(*this,this->window) {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
     this->initMap(3,sf::Vector2f(16,16),0.0f);
 }
 
 void Game::run(){
-    this->stateManager.pushState(std::make_unique<GameStateManager::MenuState>(stateManager));
+    this->gameStateManager.pushState(std::make_unique<GameStateManager::MenuState>(gameStateManager));
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            Node& collision = checkMouseCollisions();
-            stateManager.handleEvent(event, window, collision);
+            gameStateManager.handleEvent(event);
+            gameStateManager.handleMouseEvent(event);
         }
 
-        stateManager.update(sf::seconds(1.f / 60.f));
+        gameStateManager.update(sf::seconds(1.f / 60.f));
 
         window.clear();
-        stateManager.render(window);
+        gameStateManager.render(window);
         window.display();
     }
 }
-Node& Game::checkMouseCollisions() {
-    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-    sf::Vector2f worldPos = window.mapPixelToCoords(mousePos);
 
-    for (size_t i = 0; i < map.size(); ++i) {
-        for (size_t j = 0; j < map[i].size(); ++j) {
-            if (map[i][j].getGlobalBounds().contains(worldPos)) {
-                return map[i][j];
-            }
-        }
-    }
-
-    //throw std::runtime_error("No collision detected");
-}
 void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset){
     ResourceManager& resourceManager = ResourceManager::getInstance();
     offset += nodeSize.x;
@@ -59,6 +46,16 @@ void Game::drawMap() {
 
     
     //std::cout << "DRAWING MAP\n" << "map size: " << map.size() << "\n" ;
+}
+
+sf::RenderWindow &Game::getRenderWindow()
+{
+    return this->window;
+}
+
+std::vector<std::vector<Node>> &Game::getMap()
+{
+    return this->map;
 }
 
 void Game::printMap() {

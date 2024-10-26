@@ -6,7 +6,7 @@
 bool GameStateManager::debugEnabled = false;
 
 // Constructor accepting a pointer to Game
-GameStateManager::GameStateManager(Game& game) : game(game) {}
+GameStateManager::GameStateManager(Game& game, sf::RenderWindow& window) : game(game), window(window) {}
 
 // GameStateManager Methods
 void GameStateManager::pushState(std::unique_ptr<GameState> state) {
@@ -36,12 +36,16 @@ GameState* GameStateManager::getCurrentState() {
     return states.top().get();
 }
 
-void GameStateManager::handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) {
+void GameStateManager::handleEvent(sf::Event& event) {
     if (!states.empty()) {
-        states.top()->handleEvent(event, window, collisionTarget);
+        states.top()->handleEvent(event);
     }
 }
-
+void GameStateManager::handleMouseEvent(sf::Event& event) {
+    if (!states.empty()) {
+        states.top()->handleMouseEvent(event);
+    }
+}
 void GameStateManager::update(sf::Time deltaTime) {
     if (!states.empty()) {
         states.top()->update(deltaTime);
@@ -55,7 +59,7 @@ void GameStateManager::render(sf::RenderWindow& window) {
 }
 
 // MenuState Methods
-void GameStateManager::MenuState::handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) {
+void GameStateManager::MenuState::handleEvent(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         debugPrint("MenuState: Key Pressed");
         if (event.key.code == sf::Keyboard::Escape) {
@@ -63,6 +67,10 @@ void GameStateManager::MenuState::handleEvent(sf::Event& event, sf::RenderWindow
             manager.changeState(std::make_unique<GameStateManager::PlayState>(manager));
         }
     }
+}
+
+void GameStateManager::MenuState::handleMouseEvent(sf::Event &event)
+{
 }
 
 void GameStateManager::MenuState::update(sf::Time deltaTime) {
@@ -75,7 +83,7 @@ void GameStateManager::MenuState::render(sf::RenderWindow& window) {
 }
 
 // PlayState Methods
-void GameStateManager::PlayState::handleEvent(sf::Event& event, sf::RenderWindow& window, Node& collisionTarget) {
+void GameStateManager::PlayState::handleEvent(sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         debugPrint("PlayState: Key Pressed");
         if (event.key.code == sf::Keyboard::Escape) {
@@ -87,10 +95,39 @@ void GameStateManager::PlayState::handleEvent(sf::Event& event, sf::RenderWindow
     }
     
     if(event.type == sf::Event::MouseButtonReleased){
-        ResourceManager& resourceManager = ResourceManager::getInstance();
-        collisionTarget.setSprite(resourceManager.createSprite16x16("wall_textures",WALL_JUNCTION_LEFT_BOTTOM_RIGHT));
+        
     }
 
+}
+
+void GameStateManager::PlayState::handleMouseEvent(sf::Event &event)
+{   
+    std::vector<std::vector<Node>>& map = manager.game.getMap();
+    
+    enableDebug();
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            debugPrint("PlayState: Left Mouse Button Pressed");
+            // Handle left mouse button press
+        } else if (event.mouseButton.button == sf::Mouse::Right) {
+            debugPrint("PlayState: Right Mouse Button Pressed");
+            // Handle right mouse button press
+        }
+    } else if (event.type == sf::Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            debugPrint("PlayState: Left Mouse Button Released");
+            // Handle left mouse button release
+        } else if (event.mouseButton.button == sf::Mouse::Right) {
+            debugPrint("PlayState: Right Mouse Button Released");
+            // Handle right mouse button release
+        }
+    disableDebug();
+    } else if (event.type == sf::Event::MouseMoved) {
+        
+        debugPrint("PlayState: Mouse Moved to (" + std::to_string(event.mouseMove.x/16) + ", " + std::to_string(event.mouseMove.y/16) + ")");
+        // Handle mouse move
+    }
+    
 }
 
 void GameStateManager::PlayState::update(sf::Time deltaTime) {
