@@ -5,6 +5,7 @@ bool Game::debugEnabled = false; // Define the static member
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game") {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
     this->initMap(100,sf::Vector2f(16,16),0.0f);
+    this->populateNodeNeighbours();
 }
 
 void Game::run() {
@@ -33,7 +34,8 @@ void Game::handleMouseEvent(sf::Event &event)
     enableDebug();
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
-            debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed");
+            debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
+            map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             
             // Handle left mouse button press
             
@@ -54,7 +56,7 @@ void Game::handleMouseEvent(sf::Event &event)
     } else if (event.type == sf::Event::MouseMoved) {
         updateMousePos(event.mouseMove.x,event.mouseMove.y);
         map[mousePosWorld.x][mousePosWorld.y].cycleTextures();
-        debugPrint("Game::handleMouseEvent: Mouse Moved to [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
+        //debugPrint("Game::handleMouseEvent: Mouse Moved to [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
         // Handle mouse move
     }
 }
@@ -86,7 +88,17 @@ void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset){
     map.push_back(row);
     }
 }
-
+void Game::populateNodeNeighbours(){
+    for (size_t i = 0; i < map.size(); ++i) { 
+        for (size_t j = 0; j < map[i].size(); ++j) {
+            Node* topNeighbour = (i > 0) ? &map[i - 1][j] : nullptr;
+            Node* leftNeighbour = (j > 0) ? &map[i][j - 1] : nullptr;
+            Node* rightNeighbour = (j < map[i].size() - 1) ? &map[i][j + 1] : nullptr;
+            Node* bottomNeighbour = (i < map.size() - 1) ? &map[i + 1][j] : nullptr;
+            map[i][j].updateNeighbours(topNeighbour, leftNeighbour, rightNeighbour, bottomNeighbour);
+        }
+    }  
+}
 void Game::drawMap() {
     for (size_t i = 0; i < map.size(); ++i) { // Use size() to get the number of rows
         for (size_t j = 0; j < map[i].size(); ++j) { // Use size() to get the number of columns

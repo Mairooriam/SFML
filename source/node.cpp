@@ -51,6 +51,16 @@ void Node::updateTexture(int textureIndex)
     
 }
 
+
+
+void Node::updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour)
+{
+    this->neighbours[0] = topNeighbour;
+    this->neighbours[1] = leftNeighbour;
+    this->neighbours[2] = rightNeighbour;
+    this->neighbours[3] = bottomNeighbour;
+}
+
 void Node::setSprite(sf::Sprite sprite)
 {
     this->Sprite = sprite;
@@ -61,4 +71,12 @@ void Node::setSprite(sf::Sprite sprite)
 void Node::draw(sf::RenderWindow &window)
 {
     window.draw(this->Sprite);
+}
+
+void Node::printNeighbours() const
+{
+    std::cout << "Node neighbour top position: [(" << neighbours[0]->position.x/16 << "),("<< neighbours[0]->position.y/16 << ")]\n";
+    std::cout << "Node neighbour left position: [(" << neighbours[1]->position.x/16 << "),("<< neighbours[1]->position.y/16 << ")]\n";
+    std::cout << "Node neighbour right position: [(" << neighbours[2]->position.x/16 << "),("<< neighbours[2]->position.y/16 << ")]\n";
+    std::cout << "Node neighbour bottom position: [(" << neighbours[3]->position.x/16 << "),("<< neighbours[3]->position.y/16 << ")]\n";
 }

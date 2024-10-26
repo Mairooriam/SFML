@@ -16,7 +16,6 @@ enum NodeType{
 class Node {
 public:
     Node(sf::Vector2f position, sf::Font font, sf::Sprite initialSprite);
-    
     void setSprite(sf::Sprite sprite);
     sf::Vector2f getPosition() const; // Function declaration
     void printNodeInfo();
@@ -25,6 +24,8 @@ public:
     sf::FloatRect getGlobalBounds() const;
     void cycleTextures();
     void updateTexture(int textureIndex);
+    void updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour);
+    
     int updateWallTextureAccordingToNeighbours();
     void draw(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
@@ -38,6 +39,7 @@ private:
     //sf::Text nodeText;
     //sf::Color nodeColor;
     int debugTextureIndex = 0;
+    Node* neighbours[4];
     sf::Sprite Sprite;
     sf::Font& font;
 };

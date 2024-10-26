@@ -27,6 +27,7 @@ private:
     void updateMousePos(int x, int y);
     void render();
     void initMap(size_t mapSize, sf::Vector2f nodeSize, float offset);
+    void populateNodeNeighbours();
     std::vector<std::vector<Node>> map;
     ResourceManager& resourceManager = ResourceManager::getInstance();
     Node& getNodeAtPosition();
