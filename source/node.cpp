@@ -16,7 +16,7 @@ sf::Vector2f Node::getPosition() const {
 void Node::printNodeInfo()
 {
     std::cout << "Node at position: [" << this->position.x << "," << this->position.y << "]"
-              << "\nNode font: " << this->font.getInfo().family
+              //<< "\nNode font: " << this->font.getInfo().family
               << "\nNode sprite global bounds: ["
               << "left: " << this->Sprite.getGlobalBounds().left << ", "
               << "top: " << this->Sprite.getGlobalBounds().top << ", "
@@ -28,6 +28,27 @@ void Node::printNodeInfo()
 sf::FloatRect Node::getGlobalBounds() const
 {
     return this->Sprite.getGlobalBounds();
+}
+
+void Node::cycleTextures()
+{
+    if (debugTextureIndex > 12)
+    {
+        debugTextureIndex = 0;
+    }
+    
+    this->updateTexture(debugTextureIndex);
+    debugTextureIndex++; 
+}
+
+void Node::updateTexture(int textureIndex)
+{
+    this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8));
+    if (textureIndex > 0 & textureIndex < 12);
+    {
+         
+    }
+    
 }
 
 void Node::setSprite(sf::Sprite sprite)

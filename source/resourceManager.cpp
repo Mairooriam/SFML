@@ -60,7 +60,14 @@ sf::Sprite ResourceManager::createSprite16x16(const std::string &textureName, co
     return sprite;
 }
 
-sf::IntRect ResourceManager::getTextureRect(const WallTextureType textureEnum, const int size, const int rows, const int columns)
+sf::IntRect ResourceManager::getTextureRect(const int index, const int size, const int rows, const int columns)
+{
+    int x = index % columns; // Column index
+    int y = index / rows; // Row index
+    return sf::IntRect(x * size, y * size, size, size);
+}
+
+sf::IntRect ResourceManager::getTextureRectWall(const WallTextureType textureEnum, const int size, const int rows, const int columns)
 {
     int x = textureEnum % columns; // Column index
     int y = textureEnum / rows; // Row index

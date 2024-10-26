@@ -1,36 +1,87 @@
 #include "game.hpp"
-Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"), gameStateManager(*this,this->window) {
+
+bool Game::debugEnabled = false; // Define the static member
+
+Game::Game() : window(sf::VideoMode(800, 600), "SFML Game") {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(3,sf::Vector2f(16,16),0.0f);
+    this->initMap(100,sf::Vector2f(16,16),0.0f);
 }
 
-void Game::run(){
-    this->gameStateManager.pushState(std::make_unique<GameStateManager::MenuState>(gameStateManager));
+void Game::run() {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-            gameStateManager.handleEvent(event);
-            gameStateManager.handleMouseEvent(event);
+            handleMouseEvent(event);
         }
-
-        gameStateManager.update(sf::seconds(1.f / 60.f));
+       
+        // Update game logic here
+        // For example, you can call a method to update the game state
+        update(sf::seconds(1.f / 60.f));
 
         window.clear();
-        gameStateManager.render(window);
+        // Render the game here
+        drawMap();
         window.display();
     }
 }
+void Game::handleMouseEvent(sf::Event &event)
+{
+    
+    enableDebug();
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed");
+            
+            // Handle left mouse button press
+            
+        } else if (event.mouseButton.button == sf::Mouse::Right) {
+            debugPrint("Game::handleMouseEvent: Right Mouse Button Pressed");
+            // Handle right mouse button press
+        }
+    } else if (event.type == sf::Event::MouseButtonReleased) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            debugPrint("Game::handleMouseEvent: Left Mouse Button Released");
+            
+            // Handle left mouse button release1
+        } else if (event.mouseButton.button == sf::Mouse::Right) {
+            debugPrint("Game::handleMouseEvent: Right Mouse Button Released");
+            // Handle right mouse button release
+        }
+    disableDebug();
+    } else if (event.type == sf::Event::MouseMoved) {
+        updateMousePos(event.mouseMove.x,event.mouseMove.y);
+        map[mousePosWorld.x][mousePosWorld.y].cycleTextures();
+        debugPrint("Game::handleMouseEvent: Mouse Moved to [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
+        // Handle mouse move
+    }
+}
+void Game::updateMousePos(int x, int y)
+{
+    this->mousePosWindow.x = x;
+    this->mousePosWindow.y = y;
 
+    
+    this->mousePosWorld.x = x/worldScale;
+    this->mousePosWorld.y = y/worldScale;
+}
+void Game::update(sf::Time deltaTime) {
+    // Update game state here
+    // For example, you can update the positions of game objects
+}
+Node &Game::getNodeAtPosition()
+{
+    // TODO: insert return statement here
+}
 void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset){
     ResourceManager& resourceManager = ResourceManager::getInstance();
     offset += nodeSize.x;
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(sf::Vector2f(j * offset, i * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",WALL_HORIZONTAL));
+            row.emplace_back(sf::Vector2f(i * offset, j * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",WALL_HORIZONTAL));
         }
     map.push_back(row);
     }

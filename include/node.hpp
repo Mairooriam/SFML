@@ -16,14 +16,15 @@ enum NodeType{
 class Node {
 public:
     Node(sf::Vector2f position, sf::Font font, sf::Sprite initialSprite);
-
+    
     void setSprite(sf::Sprite sprite);
     sf::Vector2f getPosition() const; // Function declaration
     void printNodeInfo();
 
     void update();
     sf::FloatRect getGlobalBounds() const;
-    int updateTexture();
+    void cycleTextures();
+    void updateTexture(int textureIndex);
     int updateWallTextureAccordingToNeighbours();
     void draw(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
@@ -36,6 +37,7 @@ private:
     //NodeType nodeState;
     //sf::Text nodeText;
     //sf::Color nodeColor;
+    int debugTextureIndex = 0;
     sf::Sprite Sprite;
     sf::Font& font;
 };

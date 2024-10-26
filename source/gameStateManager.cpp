@@ -42,68 +42,6 @@ void GameStateManager::handleEvent(sf::Event& event) {
     }
 }
 void GameStateManager::handleMouseEvent(sf::Event& event) {
-    if (!states.empty()) {
-        states.top()->handleMouseEvent(event);
-    }
-}
-void GameStateManager::update(sf::Time deltaTime) {
-    if (!states.empty()) {
-        states.top()->update(deltaTime);
-    }
-}
-
-void GameStateManager::render(sf::RenderWindow& window) {
-    if (!states.empty()) {
-        states.top()->render(window);
-    }
-}
-
-// MenuState Methods
-void GameStateManager::MenuState::handleEvent(sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
-        debugPrint("MenuState: Key Pressed");
-        if (event.key.code == sf::Keyboard::Escape) {
-            debugPrint("MenuState: Switching to PlayState");
-            manager.changeState(std::make_unique<GameStateManager::PlayState>(manager));
-        }
-    }
-}
-
-void GameStateManager::MenuState::handleMouseEvent(sf::Event &event)
-{
-}
-
-void GameStateManager::MenuState::update(sf::Time deltaTime) {
-    // Update logic here
-}
-
-void GameStateManager::MenuState::render(sf::RenderWindow& window) {
-    window.clear(sf::Color::Blue);
-    // Add rendering code here
-}
-
-// PlayState Methods
-void GameStateManager::PlayState::handleEvent(sf::Event& event) {
-    if (event.type == sf::Event::KeyPressed) {
-        debugPrint("PlayState: Key Pressed");
-        if (event.key.code == sf::Keyboard::Escape) {
-            debugPrint("PlayState: Switching to MenuState");
-            Game& game = getGame();
-            game.printMap();
-            manager.changeState(std::make_unique<GameStateManager::MenuState>(manager));
-        }
-    }
-    
-    if(event.type == sf::Event::MouseButtonReleased){
-        
-    }
-
-}
-
-void GameStateManager::PlayState::handleMouseEvent(sf::Event &event)
-{   
-    std::vector<std::vector<Node>>& map = manager.game.getMap();
-    
     enableDebug();
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
@@ -127,22 +65,16 @@ void GameStateManager::PlayState::handleMouseEvent(sf::Event &event)
         debugPrint("PlayState: Mouse Moved to (" + std::to_string(event.mouseMove.x/16) + ", " + std::to_string(event.mouseMove.y/16) + ")");
         // Handle mouse move
     }
-    
+}
+void GameStateManager::update(sf::Time deltaTime) {
+    if (!states.empty()) {
+        states.top()->update(deltaTime);
+    }
 }
 
-void GameStateManager::PlayState::update(sf::Time deltaTime) {
-    // Update logic here
+void GameStateManager::render(sf::RenderWindow& window) {
+    if (!states.empty()) {
+        states.top()->render(window);
+    }
 }
 
-
-void GameStateManager::PlayState::render(sf::RenderWindow& window) {
-    window.clear(sf::Color::Green);
-    
-    Game& game = getGame();
-    game.drawMap();
-   
-    
-
-    
-    
-}

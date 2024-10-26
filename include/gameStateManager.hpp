@@ -11,12 +11,11 @@ class Game;
 
 class GameState {
 public:
-    
+    virtual ~GameState() = default;
     virtual void handleEvent(sf::Event& event) = 0;
     virtual void handleMouseEvent(sf::Event& event) = 0;
     virtual void update(sf::Time deltaTime) = 0;
     virtual void render(sf::RenderWindow& window) = 0;
-    virtual ~GameState() = default;
 };
 
 class GameStateManager {
@@ -75,49 +74,17 @@ public:
     // Methods to enable/disable debug printing
     static void enableDebug() { debugEnabled = true; }
     static void disableDebug() { debugEnabled = false; }
-
-    class MenuState : public GameState {
-    public:
-        MenuState(GameStateManager& manager) : manager(manager) {}
-        void handleEvent(sf::Event& event) override;
-        void handleMouseEvent(sf::Event& event) override;
-        void update(sf::Time deltaTime) override;
-        void render(sf::RenderWindow& window) override;
-    private:
-        GameStateManager& manager;
-        Game& getGame() { return manager.getGame(); }
-        sf::RenderWindow& getRenderWindow() { return manager.getRenderWindow(); }
-    };
-
-    class PlayState : public GameState {
-    public:
-        PlayState(GameStateManager& manager) : manager(manager) {}
-        void handleEvent(sf::Event& event) override;
-        void handleMouseEvent(sf::Event& event) override;
-        void update(sf::Time deltaTime) override;
-        void render(sf::RenderWindow& window) override;
-    private:
-        GameStateManager& manager;
-        Game& getGame() { return manager.getGame(); }
-        sf::RenderWindow& getRenderWindow() { return manager.getRenderWindow(); }
-    };
-    Game& getGame() { return game; }
-    sf::RenderWindow& getRenderWindow() { return window; }
-private:
-    Game& game; // Pointer to the Game class
-    sf::RenderWindow& window;
-    /**
-     * @brief A stack of unique pointers to game states.
-     */
-    std::stack<std::unique_ptr<GameState>> states;
-    static bool debugEnabled; // Debug flag
-
-        // Debug print method
+    // Debug print method
     static void debugPrint(const std::string& message) {
         if (debugEnabled) {
             std::cout << message << std::endl;
         }
     }
+private:
+    Game& game;
+    sf::RenderWindow& window;
+    std::stack<std::unique_ptr<GameState>> states;
+    static bool debugEnabled;
 };
 
 #endif // GAME_STATE_MANAGER_HPP

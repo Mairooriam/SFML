@@ -24,6 +24,7 @@ enum WallTextureType{
     FLOOR_GREEN
 };
 
+    
 class ResourceManager {
 public:
     static ResourceManager& getInstance() {
@@ -36,12 +37,13 @@ public:
 
     // Creates sprite of supplied texture and index
     sf::Sprite createSprite16x16(const std::string& textureName, const WallTextureType texture);
+    sf::IntRect getTextureRect(const int index, const int size, const int rows, const int columns);
     // Retrieve a font by name
     sf::Font& getFont(const std::string& name);
 private:
     ResourceManager();
     // returns intRect according to index and texture dimensions.
-    sf::IntRect getTextureRect(const WallTextureType textureEnum, const int size, const int rows, const int columns);
+    sf::IntRect getTextureRectWall(const WallTextureType textureEnum, const int size, const int rows, const int columns);
     // Retrieve a texture by name
     sf::Texture& getTexture(const std::string& name);
     
