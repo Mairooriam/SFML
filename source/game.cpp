@@ -36,7 +36,8 @@ void Game::handleMouseEvent(sf::Event &event)
         if (event.mouseButton.button == sf::Mouse::Left) {
             debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
-            
+            map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
+            map[mousePosWorld.x][mousePosWorld.y].updateWallTextureAccordingToNeighbours();
             // Handle left mouse button press
             
         } else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -55,7 +56,8 @@ void Game::handleMouseEvent(sf::Event &event)
     disableDebug();
     } else if (event.type == sf::Event::MouseMoved) {
         updateMousePos(event.mouseMove.x,event.mouseMove.y);
-        map[mousePosWorld.x][mousePosWorld.y].cycleTextures();
+        //map[mousePosWorld.x][mousePosWorld.y].cycleTextures();
+        
         //debugPrint("Game::handleMouseEvent: Mouse Moved to [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
         // Handle mouse move
     }
@@ -83,7 +85,7 @@ void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset){
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(sf::Vector2f(i * offset, j * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",WALL_HORIZONTAL));
+            row.emplace_back(sf::Vector2f(i * offset, j * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN));
         }
     map.push_back(row);
     }

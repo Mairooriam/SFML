@@ -19,25 +19,29 @@ public:
     void setSprite(sf::Sprite sprite);
     sf::Vector2f getPosition() const; // Function declaration
     void printNodeInfo();
-
+    NodeType getNodeType();
+    int getNeighbourBitSet();
+    void updateWallTextureAccordingToNeighbours();
     void update();
     sf::FloatRect getGlobalBounds() const;
     void cycleTextures();
     void updateTexture(int textureIndex);
     void updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour);
-    
-    int updateWallTextureAccordingToNeighbours();
+    void setNodeWall();
+    void setTextureRect(sf::IntRect rect);
+
     void draw(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
     void printNeighbours() const;
     int getNeighboursNodeType() const;
-
+    NodeType nodeType;
 private:
     sf::Vector2f position;
     //std::array<int, 4> neighbours;
     //NodeType nodeState;
     //sf::Text nodeText;
     //sf::Color nodeColor;
+    
     int debugTextureIndex = 0;
     Node* neighbours[4];
     sf::Sprite Sprite;

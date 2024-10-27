@@ -1,5 +1,6 @@
 #include "node.hpp"
 #include "resourceManager.hpp"
+#include <bitset>
 ResourceManager& resourceManager = ResourceManager::getInstance();
 
 Node::Node(sf::Vector2f position, sf::Font font, sf::Sprite sprite) 
@@ -25,6 +26,11 @@ void Node::printNodeInfo()
               << std::endl;
 }
 
+NodeType Node::getNodeType()
+{
+    return this->nodeType;
+}
+
 sf::FloatRect Node::getGlobalBounds() const
 {
     return this->Sprite.getGlobalBounds();
@@ -38,20 +44,30 @@ void Node::cycleTextures()
     }
     
     this->updateTexture(debugTextureIndex);
+    this->nodeType = NODE_WALL;
     debugTextureIndex++; 
 }
 
 void Node::updateTexture(int textureIndex)
 {
     this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8));
-    if (textureIndex > 0 & textureIndex < 12);
-    {
-         
-    }
+
     
 }
 
+int Node::getNeighbourBitSet()
+{
+    std::bitset<4> bitsetExample("0000");
 
+    for (size_t i = 0; i < 3; ++i) {
+        if (this->neighbours[i] != nullptr)
+            if (this->neighbours[i]->isOfNodeType(NODE_WALL)) {
+                bitsetExample.set(i);
+            }
+    }
+    //std::cout <<"im in NODE. Bitset printed: "<< bitsetExample << "\n";
+    return bitsetExample.to_ulong();
+}
 
 void Node::updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour)
 {
@@ -59,6 +75,88 @@ void Node::updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* right
     this->neighbours[1] = leftNeighbour;
     this->neighbours[2] = rightNeighbour;
     this->neighbours[3] = bottomNeighbour;
+}
+void Node::setNodeWall()
+{
+    this->setTextureRect(resourceManager.getTextureRect(WALL_HORIZONTAL,16,8,8));
+    this->nodeType = NODE_WALL;
+}
+
+void Node::setTextureRect(sf::IntRect rect)
+{
+    this->Sprite.setTextureRect(rect);
+}
+
+void Node::updateWallTextureAccordingToNeighbours()
+{
+    int wallCheckResult = this->getNeighbourBitSet();
+    switch (wallCheckResult)
+    {
+    // SINGLE WALL ON ANY SIDE
+    case 1:
+        // WALL AT TOP
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 2:
+        // WALL AT BOTTOM
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 3:
+        // WALL AT BOTTOM
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 4:
+        // WALL AT LEFT
+        this->updateTexture(WALL_HORIZONTAL);
+        break;
+    case 8:
+        // WALL AT RIGHT
+        this->updateTexture(WALL_HORIZONTAL);
+        break;
+    case 9:
+        // WALL AT RIGHT
+        this->updateTexture(WALL_CORNER_BOTTOM_LEFT);
+        break;
+    
+    case 10:
+        // WALL AT RIGHT AND BOTTOM
+        this->updateTexture(WALL_CORNER_TOP_LEFT);
+        break;
+    case 5:
+        // WALL AT LEFT AND TOP
+        this->updateTexture(WALL_CORNER_BOTTOM_RIGHT);
+        break;
+    case 11:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_JUNCTION_TOP_RIGHT_BOTTOM);
+        break;    
+     case 12:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_HORIZONTAL);
+        break;   
+    case 13:
+        // WALL LEFT TOP RIGHT
+        this->updateTexture(WALL_JUNCTION_LEFT_TOP_RIGHT);
+        break;
+    case 14:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_JUNCTION_LEFT_BOTTOM_RIGHT);
+        break; 
+    case 7:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_JUNCTION_TOP_LEFT_BOTTOM);
+    break;
+    case 6:
+        // WALL TOP RIGHT BOTTOM
+        this->updateTexture(WALL_CORNER_TOP_RIGHT);
+    break;        
+    case 15:
+        // WALL AT EACH SIDE
+        this->updateTexture(WALL_JUNCTION);
+        break;
+    default:
+        break;
+    }
 }
 
 void Node::setSprite(sf::Sprite sprite)
@@ -71,6 +169,17 @@ void Node::setSprite(sf::Sprite sprite)
 void Node::draw(sf::RenderWindow &window)
 {
     window.draw(this->Sprite);
+}
+
+bool Node::isOfNodeType(NodeType input) const
+{
+    if(this->nodeType == input){
+        return true;
+    }
+    else{
+         return false;
+    }
+   
 }
 
 void Node::printNeighbours() const

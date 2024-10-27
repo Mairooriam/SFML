@@ -323,7 +323,7 @@ int Node::areNeighboursWall()
 
     for (size_t i = 0; i < 4; ++i) {
         if (this->neighbors[i] != nullptr)
-            if (this->neighbors[i]->isWall()) {
+            if (this->neighbors[i]->isWall) {
                 bitsetExample.set(i);
             }
     }
