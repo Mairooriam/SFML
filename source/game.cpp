@@ -4,7 +4,7 @@ bool Game::debugEnabled = false; // Define the static member
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game") {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(100,sf::Vector2f(16,16),0.0f);
+    this->initMap(10,sf::Vector2f(16,16),0.0f);
     this->populateNodeNeighbours();
 }
 
@@ -37,7 +37,7 @@ void Game::handleMouseEvent(sf::Event &event)
             debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
-            map[mousePosWorld.x][mousePosWorld.y].updateWallTextureAccordingToNeighbours();
+            map[mousePosWorld.x][mousePosWorld.y].printNeighbourBitSet();
             // Handle left mouse button press
             
         } else if (event.mouseButton.button == sf::Mouse::Right) {

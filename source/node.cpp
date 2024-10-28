@@ -3,10 +3,17 @@
 #include <bitset>
 ResourceManager& resourceManager = ResourceManager::getInstance();
 
-Node::Node(sf::Vector2f position, sf::Font font, sf::Sprite sprite) 
+Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite) 
     : position(position), 
     font(font){ // Use initializer list
     setSprite(sprite);
+    text.setFont(font);
+    text.setCharacterSize(5); // Set character size
+    text.setOutlineColor(sf::Color::Black);
+    text.setOutlineThickness(0.5);
+    text.setFillColor(sf::Color::White); // Set text color
+    text.setPosition(position); // Set text position
+    text.setString(std::to_string(int(position.x/16)) + ", " + std::to_string(int(position.y/16)));
     // Additional initialization if needed
 }
     
@@ -85,6 +92,12 @@ void Node::setNodeWall()
 void Node::setTextureRect(sf::IntRect rect)
 {
     this->Sprite.setTextureRect(rect);
+}
+
+void Node::printNeighbourBitSet()
+{
+    this->printNodeInfo();
+    std::cout << this->getNeighbourBitSet() << "\n"; 
 }
 
 void Node::updateWallTextureAccordingToNeighbours()
@@ -169,6 +182,7 @@ void Node::setSprite(sf::Sprite sprite)
 void Node::draw(sf::RenderWindow &window)
 {
     window.draw(this->Sprite);
+    window.draw(this->text);
 }
 
 bool Node::isOfNodeType(NodeType input) const
@@ -184,8 +198,8 @@ bool Node::isOfNodeType(NodeType input) const
 
 void Node::printNeighbours() const
 {
-    std::cout << "Node neighbour top position: [(" << neighbours[0]->position.x/16 << "),("<< neighbours[0]->position.y/16 << ")]\n";
-    std::cout << "Node neighbour left position: [(" << neighbours[1]->position.x/16 << "),("<< neighbours[1]->position.y/16 << ")]\n";
-    std::cout << "Node neighbour right position: [(" << neighbours[2]->position.x/16 << "),("<< neighbours[2]->position.y/16 << ")]\n";
-    std::cout << "Node neighbour bottom position: [(" << neighbours[3]->position.x/16 << "),("<< neighbours[3]->position.y/16 << ")]\n";
+    std::cout << "Node neighbour top position: [(" << neighbours[0]->position.x/16 << "),("<< neighbours[0]->position.y/16 << ")]" << "Nodetype: " << neighbours[0]->nodeType << "\n";
+    std::cout << "Node neighbour left position: [(" << neighbours[1]->position.x/16 << "),("<< neighbours[1]->position.y/16 << ")]" << "Nodetype: " << neighbours[1]->nodeType << "\n";
+    std::cout << "Node neighbour right position: [(" << neighbours[2]->position.x/16 << "),("<< neighbours[1]->position.y/16 << ")]" << "Nodetype: " << neighbours[2]->nodeType << "\n";
+    std::cout << "Node neighbour bottom position: [(" << neighbours[3]->position.x/16 << "),("<< neighbours[3]->position.y/16 << ")]" << "Nodetype: " << neighbours[3]->nodeType << "\n";
 }
