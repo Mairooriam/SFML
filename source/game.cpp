@@ -4,7 +4,7 @@ bool Game::debugEnabled = false; // Define the static member
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game") {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(10,sf::Vector2f(16,16),0.0f);
+    this->initMap(30,sf::Vector2f(16,16),0.0f);
     this->populateNodeNeighbours();
 }
 
@@ -37,11 +37,14 @@ void Game::handleMouseEvent(sf::Event &event)
             debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
-            map[mousePosWorld.x][mousePosWorld.y].printNeighbourBitSet();
+            //map[mousePosWorld.x][mousePosWorld.y].updateNeighbourBitSet();
+            // Use getNodePointer to get a pointer to the Node and add it to the map
+            this->addNodeToCurrentlyWallNodesMap(map[mousePosWorld.x][mousePosWorld.y].getNodePointer());
             // Handle left mouse button press
             
         } else if (event.mouseButton.button == sf::Mouse::Right) {
             debugPrint("Game::handleMouseEvent: Right Mouse Button Pressed");
+            
             // Handle right mouse button press
         }
     } else if (event.type == sf::Event::MouseButtonReleased) {
@@ -51,6 +54,10 @@ void Game::handleMouseEvent(sf::Event &event)
             // Handle left mouse button release1
         } else if (event.mouseButton.button == sf::Mouse::Right) {
             debugPrint("Game::handleMouseEvent: Right Mouse Button Released");
+            
+            map[mousePosWorld.x][mousePosWorld.y].printNeighbourBitSet();
+            this->printCurrentlyWallNodesMap();
+            this->updateCurrentlyWallNodes();
             // Handle right mouse button release
         }
     disableDebug();
@@ -71,7 +78,21 @@ void Game::updateMousePos(int x, int y)
     this->mousePosWorld.x = x/worldScale;
     this->mousePosWorld.y = y/worldScale;
 }
-void Game::update(sf::Time deltaTime) {
+void Game::updateCurrentlyWallNodes()
+{
+    enableDebug();
+    for (auto& pair : currentlyWallNodesMap) {
+        pair.second->updateNeighbourBitSet();
+        pair.second->updateWallTextureAccordingToNeighbours();
+
+        
+    }
+    
+    debugPrint("UPDATED WALLS ACCORDING TO NEIGHKKBVOURS");
+    disableDebug();
+}
+void Game::update(sf::Time deltaTime)
+{
     // Update game state here
     // For example, you can update the positions of game objects
 }
@@ -124,10 +145,24 @@ std::vector<std::vector<Node>> &Game::getMap()
 }
 
 void Game::printMap() {
+
     for (size_t i = 0; i < map.size(); ++i) {
         for (size_t j = 0; j < map[i].size(); ++j) {
             // Assuming Node has a method to get its position or relevant information
             map[i][j].printNodeInfo();
         }
+    }
+}
+
+
+void Game::addNodeToCurrentlyWallNodesMap(Node* node)
+{
+    this->currentlyWallNodesMap[node->getPositionWithScale(this->worldScale)] = std::move(node);
+}
+
+
+void Game::printCurrentlyWallNodesMap() const {
+    for (const auto& pair : currentlyWallNodesMap) {
+        std::cout << "Key: " << pair.first << " -> Value: " << pair.second << std::endl;
     }
 }

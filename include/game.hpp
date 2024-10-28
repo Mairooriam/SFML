@@ -4,6 +4,7 @@
 #include "ResourceManager.hpp"
 #include "GameStateManager.hpp"
 #include "node.hpp"
+#include "operatorUtils.hpp"
 class Game {
 public:
     static Game& getInstance() {
@@ -25,13 +26,17 @@ private:
     void handleMouseEvent(sf::Event& event);
     void update(sf::Time deltaTime);
     void updateMousePos(int x, int y);
+    void updateCurrentlyWallNodes();
     void render();
     void initMap(size_t mapSize, sf::Vector2f nodeSize, float offset);
     void populateNodeNeighbours();
+
+    void addNodeToCurrentlyWallNodesMap(Node* node);
+    void printCurrentlyWallNodesMap() const;
     std::vector<std::vector<Node>> map;
     ResourceManager& resourceManager = ResourceManager::getInstance();
     Node& getNodeAtPosition();
-    
+    std::unordered_map<sf::Vector2f, Node*, std::hash<sf::Vector2f>> currentlyWallNodesMap;
     sf::RenderWindow window;
     // Methods to enable/disable debug printing
     static void enableDebug() { debugEnabled = true; }

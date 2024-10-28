@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <iostream>
-
+#include <bitset>
 enum NodeType{
     NODE_EMPTY = 0,
     NODE_PLAYER,
@@ -16,34 +16,44 @@ enum NodeType{
 class Node {
 public:
     Node(sf::Vector2f position, sf::Font& font, sf::Sprite initialSprite);
+    
     void setSprite(sf::Sprite sprite);
+     void setNodeWall();
+    void setTextureRect(sf::IntRect rect);
+
+
     sf::Vector2f getPosition() const; // Function declaration
-    void printNodeInfo();
+    sf::Vector2f getPositionWithScale(int scale) const;
     NodeType getNodeType();
     int getNeighbourBitSet();
-    void updateWallTextureAccordingToNeighbours();
-    void update();
     sf::FloatRect getGlobalBounds() const;
-    void cycleTextures();
+    Node* getNodePointer();
+    
+    void printNodeInfo();
+    void printNeighbourBitSet();
+    void printNeighbours() const;
+
+    void update();
+    void updateWallTextureAccordingToNeighbours();
     void updateTexture(int textureIndex);
     void updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour);
-    void setNodeWall();
-    void setTextureRect(sf::IntRect rect);
-    void printNeighbourBitSet();
+    void updateNeighbourBitSet();
+
+    void cycleTextures();
+    
+   
+    
     void draw(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
-    void printNeighbours() const;
     int getNeighboursNodeType() const;
     NodeType nodeType;
 private:
     sf::Vector2f position;
-    //std::array<int, 4> neighbours;
-    //NodeType nodeState;
-    //sf::Text nodeText;
-    //sf::Color nodeColor;
-    
     int debugTextureIndex = 0;
+    
     Node* neighbours[4];
+    std::bitset<4> neighbourBitSet{0};
+
     sf::Sprite Sprite;
     sf::Font& font;
     sf::Text text;
