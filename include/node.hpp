@@ -5,6 +5,7 @@
 #include <array>
 #include <iostream>
 #include <bitset>
+#include <memory> // Include the memory header for std::shared_ptr
 enum NodeType{
     NODE_EMPTY = 0,
     NODE_PLAYER,
@@ -15,12 +16,12 @@ enum NodeType{
 
 class Node {
 public:
-    Node(sf::Vector2f position, sf::Font& font, sf::Sprite initialSprite);
+    Node(sf::Vector2f position, sf::Font& font, sf::Sprite initialSprite, std::shared_ptr<int> worldScale);
     
     void setSprite(sf::Sprite sprite);
-     void setNodeWall();
+    void setNodeWall();
     void setTextureRect(sf::IntRect rect);
-
+    void setSpriteScale(float scale);
 
     sf::Vector2f getPosition() const; // Function declaration
     sf::Vector2f getPositionWithScale(int scale) const;
@@ -38,10 +39,12 @@ public:
     void updateTexture(int textureIndex);
     void updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour);
     void updateNeighbourBitSet();
-
+    void updateTextAccordingToSpriteSize();
+    void updateSpritePosition();
+    
     void cycleTextures();
     
-   
+    
     
     void draw(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
@@ -53,10 +56,20 @@ private:
     
     Node* neighbours[4];
     std::bitset<4> neighbourBitSet{0};
-
+    std::shared_ptr<int> worldScale;
     sf::Sprite Sprite;
     sf::Font& font;
     sf::Text text;
+
+    // Debug print method
+    static void debugPrint(const std::string& message) {
+        if (debugEnabled) {
+            std::cout << message << std::endl;
+        }
+    }
+    static void enableDebug() { debugEnabled = true; }
+    static void disableDebug() { debugEnabled = false; }
+    static bool debugEnabled;
     };
 
 #endif // NODE_HPP

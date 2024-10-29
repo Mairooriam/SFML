@@ -2,18 +2,22 @@
 #include "resourceManager.hpp"
 
 ResourceManager& resourceManager = ResourceManager::getInstance();
+bool Node::debugEnabled = false; // Define the static member
 
-Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite) 
+Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, std::shared_ptr<int> worldScale) 
     : position(position), 
-    font(font){ // Use initializer list
+    font(font),
+    worldScale(worldScale)
+    { // Use initializer list
     setSprite(sprite);
+    this->Sprite.setPosition(position);
     text.setFont(font);
-    text.setCharacterSize(5); // Set character size
+    text.setCharacterSize(32); // Set character size
     text.setOutlineColor(sf::Color::Black);
     text.setOutlineThickness(0.5);
     text.setFillColor(sf::Color::White); // Set text color
     text.setPosition(position); // Set text position
-    text.setString(std::to_string(int(position.x/16)) + ", " + std::to_string(int(position.y/16)));
+    text.setString("("+std::to_string(int(position.x/16)) + ", " + std::to_string(int(position.y/16))+ ")");
     // Additional initialization if needed
 }
 
@@ -50,6 +54,35 @@ void Node::cycleTextures()
     this->updateTexture(debugTextureIndex);
     this->nodeType = NODE_WALL;
     debugTextureIndex++; 
+}
+void Node::updateTextAccordingToSpriteSize()
+{
+    text.setCharacterSize(*worldScale/4); // Set character size
+
+    // Calculate the center of the sprite
+    float spriteCenterX = position.x + (*worldScale / 2.0f);
+    float spriteCenterY = position.y + (*worldScale / 2.0f);
+
+    // Calculate the offset for centering the text
+    sf::FloatRect textBounds = text.getLocalBounds();
+    float textOffsetX = textBounds.width / 2.0f;
+    float textOffsetY = textBounds.height / 2.0f;
+
+    // Set the position of the text to be centered within the sprite
+    text.setPosition(spriteCenterX - textOffsetX, spriteCenterY - textOffsetY);
+    
+
+}
+void Node::updateSpritePosition()
+{   
+    enableDebug();
+    int size = Sprite.getGlobalBounds().width;
+    sf::Vector2f oldpos = Sprite.getPosition();
+    debugPrint("Node old pos: (" + std::to_string(oldpos.x) + ", " + std::to_string(oldpos.y) + "), size: " + std::to_string(size));
+    this->Sprite.setPosition(sf::Vector2f(size - *worldScale, size - *worldScale));
+    sf::Vector2f newpos = Sprite.getPosition();
+    debugPrint("Node new pos: (" + std::to_string(newpos.x) + ", " + std::to_string(newpos.y) + "), size: " + std::to_string(size));
+    disableDebug();
 }
 void Node::draw(sf::RenderWindow &window)
 {
@@ -178,10 +211,13 @@ void Node::updateNeighbourBitSet(){
 // PRINT METHODS
 void Node::printNeighbours() const
 {
-    std::cout << "Node neighbour top position: [(" << neighbours[0]->position.x/16 << "),("<< neighbours[0]->position.y/16 << ")]" << "Nodetype: " << neighbours[0]->nodeType << "\n";
-    std::cout << "Node neighbour left position: [(" << neighbours[1]->position.x/16 << "),("<< neighbours[1]->position.y/16 << ")]" << "Nodetype: " << neighbours[1]->nodeType << "\n";
-    std::cout << "Node neighbour right position: [(" << neighbours[2]->position.x/16 << "),("<< neighbours[1]->position.y/16 << ")]" << "Nodetype: " << neighbours[2]->nodeType << "\n";
-    std::cout << "Node neighbour bottom position: [(" << neighbours[3]->position.x/16 << "),("<< neighbours[3]->position.y/16 << ")]" << "Nodetype: " << neighbours[3]->nodeType << "\n";
+    for (int i = 0; i < 4; ++i) {
+        if (neighbours[i] != nullptr) {
+            std::cout << "Node neighbour " << i << " position: [(" << neighbours[i]->position.x/16 << "),(" << neighbours[i]->position.y/16 << ")]" << " Nodetype: " << neighbours[i]->nodeType << "\n";
+        } else {
+            std::cout << "Node neighbour " << i << " is nullptr\n";
+        }
+    }
 }
 void Node::printNeighbourBitSet()
 {
@@ -210,9 +246,23 @@ void Node::setTextureRect(sf::IntRect rect)
 {
     this->Sprite.setTextureRect(rect);
 }
+void Node::setSpriteScale(float scale)
+{
+    float multiplier = scale / 16;
+    Sprite.setScale(multiplier, multiplier);
+
+    // Update the position according to the new scale
+    // float newX = position.x * multiplier;
+    // float newY = position.y * multiplier;
+    // Sprite.setPosition(newX, newY);
+
+    // Update the text position as well
+    //text.setPosition(newX, newY);
+}
 void Node::setSprite(sf::Sprite sprite)
 {
     this->Sprite = sprite;
-    //this->Sprite.setScale(10,10);
-    this->Sprite.setPosition(position.x,position.y);
+
 }
+
+

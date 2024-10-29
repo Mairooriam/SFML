@@ -2,9 +2,12 @@
 
 bool Game::debugEnabled = false; // Define the static member
 
-Game::Game() : window(sf::VideoMode(800, 600), "SFML Game") {
+Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
+    worldScale(std::make_shared<int>(128))
+    {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(30,sf::Vector2f(16,16),0.0f);
+    this->initMap(3, *worldScale, 0.0f);
+    //this->updateMapScale();
     this->populateNodeNeighbours();
 }
 
@@ -16,6 +19,7 @@ void Game::run() {
                 window.close();
             }
             handleMouseEvent(event);
+            handleKeyEvent(event);
         }
        
         // Update game logic here
@@ -56,6 +60,7 @@ void Game::handleMouseEvent(sf::Event &event)
             debugPrint("Game::handleMouseEvent: Right Mouse Button Released");
             
             map[mousePosWorld.x][mousePosWorld.y].printNeighbourBitSet();
+            map[mousePosWorld.x][mousePosWorld.y].updateTextAccordingToSpriteSize();
             this->printCurrentlyWallNodesMap();
             this->updateCurrentlyWallNodes();
             // Handle right mouse button release
@@ -69,14 +74,75 @@ void Game::handleMouseEvent(sf::Event &event)
         // Handle mouse move
     }
 }
+void Game::handleKeyEvent(sf::Event &event)
+{
+    enableDebug();
+    if (event.type == sf::Event::KeyPressed) {
+        switch (event.key.code) {
+            case sf::Keyboard::W:
+                
+                *worldScale += 1;
+                updateMapScale();
+                debugPrint("Game::handleKeyEvent: W Key Pressed. worldScale = [" + std::to_string(*worldScale)+"]" );
+                break;
+            case sf::Keyboard::A:
+                debugPrint("Game::handleKeyEvent: A Key Pressed");
+                break;
+            case sf::Keyboard::S:
+                
+                *worldScale -= 1;
+                updateMapScale();
+                debugPrint("Game::handleKeyEvent: S Key Pressed. worldScale = [" + std::to_string(*worldScale)+"]" );
+                break;
+            case sf::Keyboard::D:
+                debugPrint("Game::handleKeyEvent: D Key Pressed");
+                break;
+            case sf::Keyboard::Escape:
+                debugPrint("Game::handleKeyEvent: Escape Key Pressed");
+                break;
+            default:
+                debugPrint("Game::handleKeyEvent: Other Key Pressed");
+                break;
+        }
+    disableDebug();   
+    } else if (event.type == sf::Event::KeyReleased) {
+        switch (event.key.code) {
+            case sf::Keyboard::W:
+                debugPrint("Game::handleKeyEvent: W Key Released");
+                // Handle W key release
+                break;
+            case sf::Keyboard::A:
+                debugPrint("Game::handleKeyEvent: A Key Released");
+                // Handle A key release
+                break;
+            case sf::Keyboard::S:
+                debugPrint("Game::handleKeyEvent: S Key Released");
+                // Handle S key release
+                break;
+            case sf::Keyboard::D:
+                debugPrint("Game::handleKeyEvent: D Key Released");
+                // Handle D key release
+                break;
+            case sf::Keyboard::Escape:
+                debugPrint("Game::handleKeyEvent: Escape Key Released");
+                // Handle Escape key release
+                break;
+            default:
+                debugPrint("Game::handleKeyEvent: Other Key Released");
+                // Handle other key releases
+                break;
+        }
+    }
+}
+
 void Game::updateMousePos(int x, int y)
 {
     this->mousePosWindow.x = x;
     this->mousePosWindow.y = y;
 
     
-    this->mousePosWorld.x = x/worldScale;
-    this->mousePosWorld.y = y/worldScale;
+    this->mousePosWorld.x = x / *worldScale;
+    this->mousePosWorld.y = y / *worldScale;
 }
 void Game::updateCurrentlyWallNodes()
 {
@@ -100,13 +166,26 @@ Node &Game::getNodeAtPosition()
 {
     // TODO: insert return statement here
 }
-void Game::initMap(size_t mapSize, sf::Vector2f nodeSize, float offset){
+void Game::updateMapScale()
+{
+    for (size_t i = 0; i < map.size(); ++i) { // Use size() to get the number of rows
+        for (size_t j = 0; j < map[i].size(); ++j) { // Use size() to get the number of columns
+            // Assuming Node has a draw method that takes a window reference
+            map[i][j].setSpriteScale(*worldScale);
+            //map[i][j].updateTextAccordingToSpriteSize();
+            //map[i][j].updateSpritePosition();
+        }
+    }
+}
+void Game::initMap(size_t mapSize, int nodeSize, float offset)
+{
     ResourceManager& resourceManager = ResourceManager::getInstance();
-    offset += nodeSize.x;
+    offset += nodeSize;
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(sf::Vector2f(i * offset, j * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN));
+            row.emplace_back(sf::Vector2f(i * offset, j * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),worldScale);
+            row[j].setSpriteScale(*worldScale);
         }
     map.push_back(row);
     }
@@ -157,7 +236,7 @@ void Game::printMap() {
 
 void Game::addNodeToCurrentlyWallNodesMap(Node* node)
 {
-    this->currentlyWallNodesMap[node->getPositionWithScale(this->worldScale)] = std::move(node);
+    this->currentlyWallNodesMap[node->getPositionWithScale(*worldScale)] = std::move(node);
 }
 
 
@@ -165,4 +244,7 @@ void Game::printCurrentlyWallNodesMap() const {
     for (const auto& pair : currentlyWallNodesMap) {
         std::cout << "Key: " << pair.first << " -> Value: " << pair.second << std::endl;
     }
+}
+void Game::setWorldScale(int newScale) {
+    *worldScale = newScale; // Dereference and assign a new value
 }
