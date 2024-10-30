@@ -5,7 +5,8 @@
 #include <array>
 #include <iostream>
 #include <bitset>
-#include <memory> // Include the memory header for std::shared_ptr
+#include <memory>
+#include <utility> // Include this for std::pair // Include the memory header for std::shared_ptr
 enum NodeType{
     NODE_EMPTY = 0,
     NODE_PLAYER,
@@ -21,15 +22,16 @@ public:
     void setSprite(sf::Sprite sprite);
     void setNodeWall();
     void setTextureRect(sf::IntRect rect);
-    void setSpriteScale(float scale);
+    void updateSpriteScale(float scale);
 
     sf::Vector2f getPosition() const; // Function declaration
-    sf::Vector2f getPositionWithScale(int scale) const;
+
     NodeType getNodeType();
     int getNeighbourBitSet();
     sf::FloatRect getGlobalBounds() const;
     Node* getNodePointer();
-    
+    std::pair<float, float> getScreenSpacePosition(float offset);
+
     void printNodeInfo();
     void printNeighbourBitSet();
     void printNeighbours() const;
@@ -40,7 +42,7 @@ public:
     void updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour);
     void updateNeighbourBitSet();
     void updateTextAccordingToSpriteSize();
-    void updateSpritePosition();
+    void updateSpritePositionAccordingToWorldscale();
     
     void cycleTextures();
     
@@ -50,6 +52,8 @@ public:
     bool isOfNodeType(NodeType input) const;
     int getNeighboursNodeType() const;
     NodeType nodeType;
+    std::string toString() const;
+
 private:
     sf::Vector2f position;
     int debugTextureIndex = 0;

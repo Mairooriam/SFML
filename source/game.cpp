@@ -2,11 +2,12 @@
 
 bool Game::debugEnabled = false; // Define the static member
 
+
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
     worldScale(std::make_shared<int>(128))
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(3, *worldScale, 0.0f);
+    this->initMap(3);
     //this->updateMapScale();
     this->populateNodeNeighbours();
 }
@@ -20,6 +21,7 @@ void Game::run() {
             }
             handleMouseEvent(event);
             handleKeyEvent(event);
+
         }
        
         // Update game logic here
@@ -121,6 +123,7 @@ void Game::handleKeyEvent(sf::Event &event)
                 break;
             case sf::Keyboard::D:
                 debugPrint("Game::handleKeyEvent: D Key Released");
+                printMap();
                 // Handle D key release
                 break;
             case sf::Keyboard::Escape:
@@ -171,21 +174,20 @@ void Game::updateMapScale()
     for (size_t i = 0; i < map.size(); ++i) { // Use size() to get the number of rows
         for (size_t j = 0; j < map[i].size(); ++j) { // Use size() to get the number of columns
             // Assuming Node has a draw method that takes a window reference
-            map[i][j].setSpriteScale(*worldScale);
+            map[i][j].updateSpriteScale(*worldScale);
+  
             //map[i][j].updateTextAccordingToSpriteSize();
             //map[i][j].updateSpritePosition();
         }
     }
 }
-void Game::initMap(size_t mapSize, int nodeSize, float offset)
+void Game::initMap(size_t mapSize)
 {
-    ResourceManager& resourceManager = ResourceManager::getInstance();
-    offset += nodeSize;
+    
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(sf::Vector2f(i * offset, j * offset), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),worldScale);
-            row[j].setSpriteScale(*worldScale);
+            row.emplace_back(sf::Vector2f(i, j), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),worldScale);
         }
     map.push_back(row);
     }
@@ -236,13 +238,13 @@ void Game::printMap() {
 
 void Game::addNodeToCurrentlyWallNodesMap(Node* node)
 {
-    this->currentlyWallNodesMap[node->getPositionWithScale(*worldScale)] = std::move(node);
+    this->currentlyWallNodesMap[node->getPosition()] = std::move(node);
 }
 
 
 void Game::printCurrentlyWallNodesMap() const {
     for (const auto& pair : currentlyWallNodesMap) {
-        std::cout << "Key: " << pair.first << " -> Value: " << pair.second << std::endl;
+        debugPrint("Key: (" + std::to_string(static_cast<int>(pair.first.x)) + ", " + std::to_string(static_cast<int>(pair.first.y)) + ") -> Value: " + pair.second->toString());
     }
 }
 void Game::setWorldScale(int newScale) {

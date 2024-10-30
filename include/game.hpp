@@ -44,7 +44,7 @@ private:
     Node& getNodeAtPosition();
     ResourceManager& resourceManager = ResourceManager::getInstance();
     
-    void initMap(size_t mapSize, int nodeSize, float offset);
+    void initMap(size_t mapSize);
     std::vector<std::vector<Node>> map;
     
     // Methods to enable/disable debug printing
