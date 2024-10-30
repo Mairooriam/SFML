@@ -34,19 +34,25 @@ private:
     void updateMousePos(int x, int y);
     void updateCurrentlyWallNodes();
     void updateMapScale();
-    
+
+    void updateMapOffset();
     void addNodeToCurrentlyWallNodesMap(Node* node);
     std::unordered_map<sf::Vector2f, Node*, std::hash<sf::Vector2f>> currentlyWallNodesMap;
    
     void render();
     sf::RenderWindow window;
-
+    sf::View view; // Add a view for panning and zooming
     Node& getNodeAtPosition();
     ResourceManager& resourceManager = ResourceManager::getInstance();
     
     void initMap(size_t mapSize);
+    void updateMapOffset(float offsetX, float offsetY);
     std::vector<std::vector<Node>> map;
-    
+    std::shared_ptr<float> mapOffsetX = std::make_shared<float>(0);
+    std::shared_ptr<float> mapOffsetY = std::make_shared<float>(0);
+
+
+
     // Methods to enable/disable debug printing
     void populateNodeNeighbours();
     void setWorldScale(int newScale);

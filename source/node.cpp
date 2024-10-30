@@ -4,10 +4,12 @@
 ResourceManager& resourceManager = ResourceManager::getInstance();
 bool Node::debugEnabled = false; // Define the static member
 
-Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, std::shared_ptr<int> worldScale) 
+Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, std::shared_ptr<int> worldScale, std::shared_ptr<float> offsetX, std::shared_ptr<float> offsetY) 
     : position(position), 
     font(font),
-    worldScale(worldScale)
+    worldScale(worldScale),
+    offsetX(offsetX),
+    offsetY(offsetY)
     { // Use initializer list
     enableDebug();
     setSprite(sprite);
@@ -70,7 +72,7 @@ void Node::updateTextAccordingToSpriteSize()
 {
     text.setCharacterSize(*worldScale/4); // Set character size
 
-    std::pair worldPos = getScreenSpacePosition(1.1);
+    std::pair worldPos = getScreenSpacePosition(1);
     // Calculate the center of the sprite
     float spriteCenterX = worldPos.first + (*worldScale / 2.0f);
     float spriteCenterY = worldPos.second + (*worldScale / 2.0f);
@@ -89,6 +91,11 @@ void Node::updateSpritePositionAccordingToWorldscale()
 {   
     std::pair posWorld = getScreenSpacePosition(1.1f);
     Sprite.setPosition(posWorld.first,posWorld.second);
+}
+void Node::updateSpritePositionAccordingToOffset()
+{
+    std::pair posWorld = getScreenSpacePosition(1);
+    Sprite.setPosition(posWorld.first + *offsetX,posWorld.second + *offsetY);
 }
 void Node::draw(sf::RenderWindow &window)
 {
@@ -110,6 +117,8 @@ std::string Node::toString() const
 {
     return "Node: (" + std::to_string(position.x) + ", " + std::to_string(position.y) + ")";
 }
+
+
 
 // UPDATE METHODS
 void Node::updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour)
@@ -269,7 +278,7 @@ void Node::updateSpriteScale(float scale)
 
     // Update the text position as well
     //text.setPosition(newX, newY);
-    this->updateSpritePositionAccordingToWorldscale();
+    this->updateSpritePositionAccordingToOffset();
     this->updateTextAccordingToSpriteSize();
 }
 void Node::setSprite(sf::Sprite sprite)

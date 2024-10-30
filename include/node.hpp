@@ -17,7 +17,7 @@ enum NodeType{
 
 class Node {
 public:
-    Node(sf::Vector2f position, sf::Font& font, sf::Sprite initialSprite, std::shared_ptr<int> worldScale);
+    Node(sf::Vector2f position, sf::Font& font, sf::Sprite initialSprite, std::shared_ptr<int> worldScale, std::shared_ptr<float> offsetX, std::shared_ptr<float> offsetY );
     
     void setSprite(sf::Sprite sprite);
     void setNodeWall();
@@ -43,7 +43,7 @@ public:
     void updateNeighbourBitSet();
     void updateTextAccordingToSpriteSize();
     void updateSpritePositionAccordingToWorldscale();
-    
+    void updateSpritePositionAccordingToOffset();
     void cycleTextures();
     
     
@@ -56,6 +56,8 @@ public:
 
 private:
     sf::Vector2f position;
+    std::shared_ptr<float> offsetX;
+    std::shared_ptr<float> offsetY;
     int debugTextureIndex = 0;
     
     Node* neighbours[4];
