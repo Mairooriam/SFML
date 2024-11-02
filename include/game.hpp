@@ -20,7 +20,7 @@ public:
 
     sf::RenderWindow& getRenderWindow();
     std::vector<std::vector<Node>>& getMap();
-
+    int tempDebugthingy = 0;
     // Add public getter methods for worldScale, offsetX, and offsetY
     float getWorldScale() const { return *worldScale; }
     float getOffsetX() const { return *mapOffsetX; }

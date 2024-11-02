@@ -7,7 +7,7 @@ Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
     worldScale(std::make_shared<int>(128))
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(20);
+    this->initMap(3);
     //this->updateMapScale();
     this->populateNodeNeighbours();
     
@@ -44,7 +44,7 @@ void Game::handleMouseEvent(sf::Event &event)
             debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
-
+            debugPrint("Clicked at" + std::to_string(mousePosWorld.x) + std::to_string(mousePosWorld.y));
             // Use getNodePointer to get a pointer to the Node and add it to the map
             this->addNodeToCurrentlyWallNodesMap(map[mousePosWorld.x][mousePosWorld.y].getNodePointer());
 
@@ -121,10 +121,12 @@ void Game::handleKeyEvent(sf::Event &event)
                 break;
             case sf::Keyboard::Num1:
                 startNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
+                startNode->setColor(sf::Color::Cyan);
                 debugPrint("Game::handleKeyEvent: 1 Key Pressed: Set Starting node!");
                 break;
             case sf::Keyboard::Num2:
                 endNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
+                endNode->setColor(sf::Color::Red);
                 debugPrint("Game::handleKeyEvent: 2 Key Pressed: Set End node!");
                 break;
             case sf::Keyboard::Num3:
@@ -134,6 +136,23 @@ void Game::handleKeyEvent(sf::Event &event)
                 
                 debugPrint("Game::handleKeyEvent: 3 Key Pressed: Updated AStar values!");
                 break;
+             case sf::Keyboard::Num4:
+                map[mousePosWorld.x][mousePosWorld.y].nodeType = NODE_EMPTY;
+                map[mousePosWorld.x][mousePosWorld.y].setTextureRect(resourceManager.getTextureRect(FLOOR_GREEN,16,8,8));
+                
+                debugPrint("Game::handleKeyEvent: 4 Key Pressed: Updated NodeType to empty!");
+                break;
+            case sf::Keyboard::Num5:
+                map[1][1].neighbours[tempDebugthingy]->cycleTextures();
+
+                
+                debugPrint("Game::handleKeyEvent: 5 Key Pressed: Cycling texture neigbour textures of (1,1) at:" + std::to_string(tempDebugthingy) );
+                break;
+            case sf::Keyboard::Num6:
+                tempDebugthingy += 1;
+                
+                debugPrint("Game::handleKeyEvent: 6 Key Pressed: tempdebug tingy added!");
+            break;
             case sf::Keyboard::Escape:
                 debugPrint("Game::handleKeyEvent: Escape Key Pressed");
                 break;
@@ -251,11 +270,18 @@ void Game::populateNodeNeighbours()
 {
     for (size_t i = 0; i < map.size(); ++i) { 
         for (size_t j = 0; j < map[i].size(); ++j) {
-            Node* topNeighbour = (i > 0) ? &map[i - 1][j] : nullptr;
-            Node* leftNeighbour = (j > 0) ? &map[i][j - 1] : nullptr;
-            Node* rightNeighbour = (j < map[i].size() - 1) ? &map[i][j + 1] : nullptr;
-            Node* bottomNeighbour = (i < map.size() - 1) ? &map[i + 1][j] : nullptr;
-            map[i][j].updateNeighbours(topNeighbour, leftNeighbour, rightNeighbour, bottomNeighbour);
+            Node* left = (i > 0) ? &map[i - 1][j] : nullptr;
+            Node* top = (j > 0) ? &map[i][j - 1] : nullptr;
+            Node* bottom = (j < map[i].size() - 1) ? &map[i][j + 1] : nullptr;
+            Node* right = (i < map.size() - 1) ? &map[i + 1][j] : nullptr;
+
+            Node* topLeft = (i > 0 && j > 0) ? &map[i - 1][j - 1] : nullptr;
+            Node* bottomLeft = (i > 0 && j < map[i].size() - 1) ? &map[i - 1][j + 1] : nullptr;
+            Node* topRight = (i < map.size() - 1 && j > 0) ? &map[i + 1][j - 1] : nullptr;
+            Node* bottomRight = (i < map.size() - 1 && j < map[i].size() - 1) ? &map[i + 1][j + 1] : nullptr;
+
+            map[i][j].updateNeighbours(top, left, right, bottom,
+                                       topLeft, topRight, bottomLeft, bottomRight);
         }
     }
 }

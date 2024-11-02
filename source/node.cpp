@@ -182,18 +182,25 @@ std::string Node::toString() const
 
 
 // UPDATE METHODS
-void Node::updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour)
+void Node::updateNeighbours(Node* top, Node* left, Node* right, Node* bottom,
+                            Node* topLeft, Node* topRight, Node* bottomLeft, Node* bottomRight)
 {
-    // this->neighbours[0] = topNeighbour;
-    // this->neighbours[1] = leftNeighbour;
-    // this->neighbours[2] = rightNeighbour;
-    // this->neighbours[3] = bottomNeighbour;
+    // ROW 1
+    this->neighbours[0] = topLeft;
+    this->neighbours[1] = top;
+    this->neighbours[2] = topRight;
 
-    this->neighbours[0] = leftNeighbour;
-    this->neighbours[1] = topNeighbour;
-    this->neighbours[2] = bottomNeighbour;
-    this->neighbours[3] = rightNeighbour;
+    //ROW 2
+    this->neighbours[3] = left;
+    this->neighbours[4] = right;
+
+    // ROW 3
+    this->neighbours[5] = bottomLeft;
+    this->neighbours[6] = bottom;
+    this->neighbours[7] = bottomRight;
 }
+
+
 void Node::updateAStarValues()
 {
     gCostText.setString(floatToStringWithPrecision(gCost,0));
@@ -211,71 +218,6 @@ void Node::updateWallTextureAccordingToNeighbours()
         // WALL AT TOP
         this->updateTexture(WALL_VERTICAL);
         break;
-    case 8:
-        // WALL AT BOTTOM
-        this->updateTexture(WALL_VERTICAL);
-        break;
-    case 12:
-        // WALL AT BOTTOM RIGHT
-        this->updateTexture(WALL_CORNER_TOP_LEFT);
-        break;
-    case 10:
-        // WALL AT LEFT BOTTOM
-        this->updateTexture(WALL_CORNER_TOP_RIGHT);
-        break;
-    case 3:
-        // WALL AT BOTTOM
-        this->updateTexture(WALL_CORNER_BOTTOM_RIGHT);
-        break;
-    case 5:
-        // WALL AT LEFT AND TOP
-        this->updateTexture(WALL_CORNER_BOTTOM_LEFT);
-        break;
-    
-    case 2:
-        // WALL AT TOP
-        this->updateTexture(WALL_HORIZONTAL);
-        break;
-
-    case 4:
-        // WALL AT LEFT
-        this->updateTexture(WALL_HORIZONTAL);
-        break;
-    
-    case 9:
-        // WALL AT RIGHT
-        this->updateTexture(WALL_VERTICAL);
-        break;
-
-
-    
-    case 11:
-        // WALL TOP RIGHT BOTTOM
-        this->updateTexture(WALL_JUNCTION_TOP_LEFT_BOTTOM);
-        break;    
-      
-    case 13:
-        // WALL LEFT TOP RIGHT
-        this->updateTexture(WALL_JUNCTION_TOP_RIGHT_BOTTOM);
-        break;
-    case 14:
-        // WALL TOP RIGHT BOTTOM
-        this->updateTexture(WALL_JUNCTION_LEFT_BOTTOM_RIGHT);
-        break; 
-    case 7:
-        // WALL TOP RIGHT BOTTOM
-        this->updateTexture(WALL_JUNCTION_LEFT_TOP_RIGHT);
-    break;
-    case 6:
-        // WALL TOP RIGHT BOTTOM
-        this->updateTexture(WALL_HORIZONTAL);
-    break;        
-    case 15:
-        // WALL AT EACH SIDE
-        this->updateTexture(WALL_JUNCTION);
-        break;
-    default:
-        break;
     }
 }
 void Node::updateTexture(int textureIndex)
@@ -283,7 +225,7 @@ void Node::updateTexture(int textureIndex)
     this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8)); 
 }
 void Node::updateNeighbourBitSet(){
-    for (size_t i = 0; i < 4; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         if (this->neighbours[i] != nullptr) {
             if (this->neighbours[i]->isOfNodeType(NODE_WALL)) {
                 this->neighbourBitSet.set(i);
@@ -298,7 +240,7 @@ void Node::updateNeighbourBitSet(){
 // PRINT METHODS
 void Node::printNeighbours() const
 {
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 8; ++i) {
         if (neighbours[i] != nullptr) {
             debugPrint("Node neighbour " + std::to_string(i) + " position: [(" + std::to_string(neighbours[i]->position.x) + "),(" + std::to_string(neighbours[i]->position.y) + ")]" + " Nodetype: " + std::to_string(neighbours[i]->nodeType));
         } else {
@@ -309,7 +251,16 @@ void Node::printNeighbours() const
 void Node::printNeighbourBitSet()
 {
     this->printNodeInfo();
-    std::cout <<"Bitset INT: "<< this->getNeighbourBitSet() << " Binary from [0][1][2][4] [top][left][right][bottom]: "<< neighbourBitSet[0]<< neighbourBitSet[1] << neighbourBitSet[2] << neighbourBitSet[3] <<"\n"; 
+    std::cout <<"Bitset INT: "<< this->getNeighbourBitSet() << " Binary from [0][1][2][4] [top][left][right][bottom]: "
+    << neighbourBitSet[0]
+    << neighbourBitSet[1] 
+    << neighbourBitSet[2] 
+    << neighbourBitSet[3] 
+    << neighbourBitSet[4]
+    << neighbourBitSet[5] 
+    << neighbourBitSet[6]
+    << neighbourBitSet[7]  
+    <<"\n"; 
 }
 void Node::printNodeInfo()
 {
@@ -347,6 +298,10 @@ void Node::updateSpriteScale(float scale)
     //text.setPosition(newX, newY);
     this->updateSpritePositionAccordingToOffset();
     this->updateTextAccordingToSpriteSize();
+}
+void Node::setColor(sf::Color color)
+{
+    Sprite.setColor(color);
 }
 void Node::setSprite(sf::Sprite sprite)
 {

@@ -26,7 +26,7 @@ public:
     void setNodeWall();
     void setTextureRect(sf::IntRect rect);
     void updateSpriteScale(float scale);
-
+    void setColor(sf::Color color);
     sf::Vector2f getPosition() const; // Function declaration
 
     NodeType getNodeType();
@@ -44,7 +44,7 @@ public:
     void updateAStarValues();
     void updateWallTextureAccordingToNeighbours();
     void updateTexture(int textureIndex);
-    void updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* rightNeighbour, Node* bottomNeighbour);
+    void updateNeighbours(Node* top, Node* left, Node* right, Node* bottom,Node* topLeft, Node* topRight, Node* bottomLeft, Node* bottomRight);
     void updateNeighbourBitSet();
     void updateTextAccordingToSpriteSize();
     void updateSpritePositionAccordingToWorldscale();
@@ -67,14 +67,14 @@ public:
     sf::Text gCostText = fIntoText(static_cast<int>(gCost));
     sf::Text hCostText = fIntoText(static_cast<int>(hCost)); // Corrected from gCost to hCost
     sf::Text fCostText = fIntoText(static_cast<int>(fCost()));
-
+    Node* neighbours[8];
 private:
     sf::Vector2f position;
 
     int debugTextureIndex = 0;
     
-    Node* neighbours[4];
-    std::bitset<4> neighbourBitSet{0};
+    
+    std::bitset<8> neighbourBitSet{0};
 
     sf::Sprite Sprite;
     sf::Font& font;
