@@ -119,6 +119,21 @@ void Game::handleKeyEvent(sf::Event &event)
                 printMap();
                 debugPrint("Game::handleKeyEvent: G Key Pressed");
                 break;
+            case sf::Keyboard::Num1:
+                startNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
+                debugPrint("Game::handleKeyEvent: 1 Key Pressed: Set Starting node!");
+                break;
+            case sf::Keyboard::Num2:
+                endNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
+                debugPrint("Game::handleKeyEvent: 2 Key Pressed: Set End node!");
+                break;
+            case sf::Keyboard::Num3:
+                map[mousePosWorld.x][mousePosWorld.y].gCost += 1;
+                map[mousePosWorld.x][mousePosWorld.y].hCost += 5;
+                map[mousePosWorld.x][mousePosWorld.y].updateAStarValues();
+                
+                debugPrint("Game::handleKeyEvent: 3 Key Pressed: Updated AStar values!");
+                break;
             case sf::Keyboard::Escape:
                 debugPrint("Game::handleKeyEvent: Escape Key Pressed");
                 break;
@@ -226,7 +241,7 @@ void Game::initMap(size_t mapSize)
     for (size_t i = 0; i < mapSize; ++i) {
         std::vector<Node> row;
         for (size_t j = 0; j < mapSize; ++j) {
-            row.emplace_back(sf::Vector2f(i, j), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),worldScale,mapOffsetX,mapOffsetY);
+            row.emplace_back(sf::Vector2f(i, j), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN), this);
         }
     map.push_back(row);
     }

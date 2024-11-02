@@ -1,20 +1,28 @@
 #include "node.hpp"
 #include "resourceManager.hpp"
-
+#include "game.hpp" // Include the header file for the Game class
+#include <sstream>
+#include <iomanip>
 ResourceManager& resourceManager = ResourceManager::getInstance();
 bool Node::debugEnabled = false; // Define the static member
 
-Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, std::shared_ptr<int> worldScale, std::shared_ptr<float> offsetX, std::shared_ptr<float> offsetY) 
+// Function to convert a float to a string with a specified number of decimal places
+std::string floatToStringWithPrecision(float value, int precision) {
+    std::ostringstream out;
+    out << std::fixed << std::setprecision(precision) << value;
+    return out.str();
+}
+
+Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, Game* game) 
     : position(position), 
     font(font),
-    worldScale(worldScale),
-    offsetX(offsetX),
-    offsetY(offsetY)
+    game(game)
+
     { // Use initializer list
     enableDebug();
     setSprite(sprite);
-    updateSpriteScale(*worldScale);
-    debugPrint("NODE INIT DONE: worldscale:" + std::to_string(*worldScale) + std::to_string(position.x));
+    updateSpriteScale(game->getWorldScale());
+    debugPrint("NODE INIT DONE: worldscale:" + std::to_string(game->getWorldScale()) + std::to_string(position.x));
     text.setFont(font);
     text.setCharacterSize(32); // Set character size
     text.setOutlineColor(sf::Color::Black);
@@ -22,6 +30,25 @@ Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, std::shared
     text.setFillColor(sf::Color::White); // Set text color
      // Set text position
     text.setString("("+std::to_string(int(position.x)) + ", " + std::to_string(int(position.y))+ ")");
+    
+    fCostText.setFont(font);
+    fCostText.setCharacterSize(32); // Set character size
+    fCostText.setOutlineColor(sf::Color::Black);
+    fCostText.setOutlineThickness(0.5);
+    fCostText.setFillColor(sf::Color::White); // Set text color
+
+
+    hCostText.setFont(font);
+    hCostText.setCharacterSize(32); // Set character size
+    hCostText.setOutlineColor(sf::Color::Black);
+    hCostText.setOutlineThickness(0.5);
+    hCostText.setFillColor(sf::Color::White); // Set text color
+
+    gCostText.setFont(font);
+    gCostText.setCharacterSize(32); // Set character size
+    gCostText.setOutlineColor(sf::Color::Black);
+    gCostText.setOutlineThickness(0.5);
+    gCostText.setFillColor(sf::Color::White); // Set text color
     updateTextAccordingToSpriteSize();
     disableDebug();
     // Additional initialization if needed
@@ -49,11 +76,12 @@ int Node::getNeighbourBitSet()
 Node* Node::getNodePointer() {
     return this; // Return a pointer to this Node
 }
-std::pair<float, float> Node::getScreenSpacePosition(float offset)
+
+std::pair<float, float> Node::getScreenSpacePosition()
 {
-    float spriteSize = *worldScale;
-    float newX = position.x * spriteSize * offset;
-    float newY = position.y * spriteSize * offset;
+    float spriteSize = game->getWorldScale();
+    float newX = position.x * spriteSize + game->getOffsetX();
+    float newY = position.y * spriteSize + game->getOffsetY();
     return std::make_pair(newX, newY);
 }
 // UTIL
@@ -70,37 +98,70 @@ void Node::cycleTextures()
 }
 void Node::updateTextAccordingToSpriteSize()
 {
-    text.setCharacterSize(*worldScale/4); // Set character size
+    float worldScale = game->getWorldScale();
+    float rowHeight = worldScale / 3.0f; // Divide the sprite height into 3 rows
 
-    std::pair worldPos = getScreenSpacePosition(1);
-    // Calculate the center of the sprite
-    float spriteCenterX = worldPos.first + (*worldScale / 2.0f);
-    float spriteCenterY = worldPos.second + (*worldScale / 2.0f);
+
+    // Set character size to be a fraction of the row height
+    text.setCharacterSize(rowHeight / 2.0f);
+    gCostText.setCharacterSize(rowHeight / 2.0f);
+    hCostText.setCharacterSize(rowHeight / 2.0f);
+    fCostText.setCharacterSize(rowHeight / 2.0f);
+
+    std::pair<float, float> worldPos = getScreenSpacePosition();
+    float spriteCenterX = worldPos.first + (worldScale / 2.0f);
 
     // Calculate the offset for centering the text
     sf::FloatRect textBounds = text.getLocalBounds();
     float textOffsetX = textBounds.width / 2.0f;
     float textOffsetY = textBounds.height / 2.0f;
 
-    // Set the position of the text to be centered within the sprite
-    text.setPosition(spriteCenterX - textOffsetX, spriteCenterY - textOffsetY);
-    
+    // Calculate the Y positions for each row
+    float topRowY = worldPos.second + (rowHeight / 2.0f);
+    float middleRowY = worldPos.second + (rowHeight * 1.5f);
+    float bottomRowY = worldPos.second + (rowHeight * 2.5f);
 
+    // Calculate the X position for the second column in the top row
+    float columnOffsetX = worldScale / 4.0f; // Adjust this value as needed
+
+    // Set the position of the text to be centered within each row
+    text.setPosition(spriteCenterX - textOffsetX, bottomRowY - textOffsetY);
+    gCostText.setPosition(spriteCenterX - columnOffsetX - textOffsetX, topRowY - textOffsetY);
+    hCostText.setPosition(spriteCenterX + columnOffsetX - textOffsetX, topRowY - textOffsetY);
+    fCostText.setPosition(spriteCenterX - textOffsetX, middleRowY - textOffsetY);
+
+    debugPrint("Node::updateTextAccordingToSpriteSize: Text position updated to: (" + std::to_string(text.getPosition().x) + ", " + std::to_string(text.getPosition().y) + ")");
 }
 void Node::updateSpritePositionAccordingToWorldscale()
 {   
-    std::pair posWorld = getScreenSpacePosition(1.1f);
+    enableDebug();
+    std::pair posWorld = getScreenSpacePosition();
     Sprite.setPosition(posWorld.first,posWorld.second);
+    updateTextAccordingToSpriteSize();
+    debugPrint("Node::updateSpritePositionAccordingToWorldscale: " + std::to_string(game->getOffsetX()) + std::to_string(game->getOffsetY()));
+    disableDebug();
 }
 void Node::updateSpritePositionAccordingToOffset()
 {
-    std::pair posWorld = getScreenSpacePosition(1);
-    Sprite.setPosition(posWorld.first + *offsetX,posWorld.second + *offsetY);
+    std::pair posWorld = getScreenSpacePosition();
+    Sprite.setPosition(posWorld.first,posWorld.second);
+    updateTextAccordingToSpriteSize();
+}
+sf::Text Node::fIntoText(float val)
+{
+    sf::Text text;
+    text.setString(floatToStringWithPrecision(val,0));
+
+    text.setFont(this->font); // Assuming 'font' is a member of Node
+    return text;
 }
 void Node::draw(sf::RenderWindow &window)
 {
     window.draw(this->Sprite);
     window.draw(this->text);
+    window.draw(this->gCostText);
+    window.draw(this->hCostText);
+    window.draw(this->fCostText);
 }
 bool Node::isOfNodeType(NodeType input) const
 {
@@ -132,6 +193,12 @@ void Node::updateNeighbours(Node* topNeighbour, Node* leftNeighbour, Node* right
     this->neighbours[1] = topNeighbour;
     this->neighbours[2] = bottomNeighbour;
     this->neighbours[3] = rightNeighbour;
+}
+void Node::updateAStarValues()
+{
+    gCostText.setString(floatToStringWithPrecision(gCost,0));
+    hCostText.setString(floatToStringWithPrecision(hCost,0));
+    fCostText.setString(floatToStringWithPrecision(fCost(),0));
 }
 void Node::updateWallTextureAccordingToNeighbours()
 {

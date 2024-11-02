@@ -20,6 +20,11 @@ public:
 
     sf::RenderWindow& getRenderWindow();
     std::vector<std::vector<Node>>& getMap();
+
+    // Add public getter methods for worldScale, offsetX, and offsetY
+    float getWorldScale() const { return *worldScale; }
+    float getOffsetX() const { return *mapOffsetX; }
+    float getOffsetY() const { return *mapOffsetY; }
 private:
     
     sf::Vector2i mousePosWindow;
@@ -50,8 +55,10 @@ private:
     std::vector<std::vector<Node>> map;
     std::shared_ptr<float> mapOffsetX = std::make_shared<float>(0);
     std::shared_ptr<float> mapOffsetY = std::make_shared<float>(0);
-
-
+    
+    // A STAR STUFF
+    Node* startNode;
+    Node* endNode;
 
     // Methods to enable/disable debug printing
     void populateNodeNeighbours();
