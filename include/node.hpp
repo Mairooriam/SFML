@@ -7,7 +7,7 @@
 #include <bitset>
 #include <memory>
 #include <utility> // Include this for std::pair // Include the memory header for std::shared_ptr
-#include "AStar.hpp"
+
 class Game;
 
 enum NodeType{
@@ -68,6 +68,11 @@ public:
     sf::Text hCostText = fIntoText(static_cast<int>(hCost)); // Corrected from gCost to hCost
     sf::Text fCostText = fIntoText(static_cast<int>(fCost()));
     Node* neighbours[8];
+    int neighbourSize;
+
+    // OPERATORS
+    friend std::ostream& operator<<(std::ostream& os, const Node& node);
+
 private:
     sf::Vector2f position;
 
@@ -75,7 +80,7 @@ private:
     
     
     std::bitset<8> neighbourBitSet{0};
-
+    
     sf::Sprite Sprite;
     sf::Font& font;
     sf::Text text;

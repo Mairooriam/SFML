@@ -5,68 +5,49 @@
 //#include "enums.h"
 #include "resourceManager.hpp"
 #include "gameStateManager.hpp"
+#include <queue>
+#include <functional>
+#include <iostream>
 
+#include "node.hpp"
 
-
+// Define the CompareNode struct
+struct CompareNode {
+    bool operator()(Node* a, Node* b) const {
+        return a->fCost() > b->fCost(); // Min-heap based on fCost
+    }
+};
+Game game;
 int main() {
+    ResourceManager& resourceManager = ResourceManager::getInstance(); // Use Singleton instance
 
-    // sf::RenderWindow window(sf::VideoMode(800, 600), "Game");
-    // GameStateManager stateManager;
-    // // Initialize ResourceManager
-    // ResourceManager& resourceManager = ResourceManager::getInstance();
-    // // Enable debug printing
-    // GameStateManager::enableDebug();
-
-    // stateManager.pushState(std::make_unique<GameStateManager::MenuState>(stateManager));
-
-    // while (window.isOpen()) {
-    //     sf::Event event;
-    //     while (window.pollEvent(event)) {
-    //         if (event.type == sf::Event::Closed) {
-    //             window.close();
-    //         }
-    //         stateManager.handleEvent(event);
-    //     }
-
-    //     stateManager.update(sf::seconds(1.f / 60.f));
-
-    //     window.clear();
-    //     stateManager.render(window);
-    //     window.display();
-    // }
-
+	Node node1(sf::Vector2f(0,0), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);
+	Node node2(sf::Vector2f(1,0), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);;
+	Node node3(sf::Vector2f(0,1), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);;
+	node2.gCost = 10;
+	node1.gCost = 20;
+	node3.gCost = 30;
  
-    Game game;
+    //Game game;
     
-    game.run();
-    return 0;
+    //game.run();
 
 
-    // std::bitset<4> bitsetExample("0010");
-
-    // // Print the entire bitset
-    // std::cout << bitsetExample << "\n";
-
-    // // Print each bit individually
-    // for (size_t i = 0; i < bitsetExample.size(); ++i) {
-    //     std::cout << bitsetExample[i] << "\n";
-    // }
-    // std::cout << "bitset in int: " << bitsetExample.to_ulong() << "\n";
-    // if (bitsetExample.to_ulong() == 1){
-    //     // WALL AT TOP
-    // }
-     // if (bitsetExample.to_ulong() == 2){
-    //     // WALL AT BOTTOM
-    // }
-      // if (bitsetExample.to_ulong() == 4){
-    //     // WALL AT LEFT
-    // }
-     // if (bitsetExample.to_ulong() == 8){
-    //     // WALL AT RIGHT
-    // }
    
+ std::priority_queue<Node*, std::vector<Node*>, CompareNode> pq;
 
-    // return 0;
+    // Add the Node objects to the priority queue
+    pq.push(&node1);
+    pq.push(&node2);
+    pq.push(&node3);
+
+    std::cout << "STARTING PRINTING" << "\n";
+    while (!pq.empty()) {
+        Node* node = pq.top();
+        std::cout << *node << std::endl; // Use the << operator
+        pq.pop();
+    }
+      return 0;
 
    
 }

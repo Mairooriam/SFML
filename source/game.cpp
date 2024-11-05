@@ -1,7 +1,7 @@
 #include "game.hpp"
 
 bool Game::debugEnabled = false; // Define the static member
-
+AStar pathfinder;
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
     worldScale(std::make_shared<int>(128))
@@ -150,6 +150,11 @@ void Game::handleKeyEvent(sf::Event &event)
                 break;
             case sf::Keyboard::Num6:
                 tempDebugthingy += 1;
+                
+                debugPrint("Game::handleKeyEvent: 6 Key Pressed: tempdebug tingy added!");
+            break;
+            case sf::Keyboard::Space:
+                pathfinder.findPath(startNode,endNode,map);
                 
                 debugPrint("Game::handleKeyEvent: 6 Key Pressed: tempdebug tingy added!");
             break;
@@ -306,6 +311,8 @@ std::vector<std::vector<Node>> &Game::getMap()
 {
     return this->map;
 }
+
+
 
 void Game::printMap() {
 

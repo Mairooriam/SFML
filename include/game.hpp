@@ -6,6 +6,7 @@
 #include "node.hpp"
 #include "operatorUtils.hpp"
 #include <memory> // Include the memory header for std::shared_ptr
+#include "AStar.hpp"
 class Game {
 public:
     static Game& getInstance() {
@@ -25,6 +26,7 @@ public:
     float getWorldScale() const { return *worldScale; }
     float getOffsetX() const { return *mapOffsetX; }
     float getOffsetY() const { return *mapOffsetY; }
+
 private:
     
     sf::Vector2i mousePosWindow;

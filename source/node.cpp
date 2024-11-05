@@ -225,10 +225,12 @@ void Node::updateTexture(int textureIndex)
     this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8)); 
 }
 void Node::updateNeighbourBitSet(){
+    neighbourSize = 0;
     for (size_t i = 0; i < 8; ++i) {
         if (this->neighbours[i] != nullptr) {
             if (this->neighbours[i]->isOfNodeType(NODE_WALL)) {
                 this->neighbourBitSet.set(i);
+                neighbourSize += 1;
             } else {
                 this->neighbourBitSet.reset(i);
             }
@@ -309,4 +311,8 @@ void Node::setSprite(sf::Sprite sprite)
 
 }
 
-
+// OPERATORS
+std::ostream& operator<<(std::ostream& os, const Node& node) {
+    os << "Node(position: (" << node.position.x << ", " << node.position.y << "), fCost: " << node.fCost() << ")";
+    return os;
+}
