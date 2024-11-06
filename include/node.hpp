@@ -7,7 +7,7 @@
 #include <bitset>
 #include <memory>
 #include <utility> // Include this for std::pair // Include the memory header for std::shared_ptr
-
+#include "utils.hpp"
 class Game;
 
 enum NodeType{
@@ -60,16 +60,17 @@ public:
     std::string toString() const;
 
     // A* related members
-    float gCost = 10; // Cost from start to current node
-    float hCost = 20; // Heuristic cost from current node to goal
+    float gCost = 0; // Cost from start to current node
+    float hCost = 0; // Heuristic cost from current node to goal
     float fCost() const { return gCost + hCost; } // Total cost
-    std::shared_ptr<Node> parent; // Parent node in the path
+
     sf::Text gCostText = fIntoText(static_cast<int>(gCost));
     sf::Text hCostText = fIntoText(static_cast<int>(hCost)); // Corrected from gCost to hCost
     sf::Text fCostText = fIntoText(static_cast<int>(fCost()));
     Node* neighbours[8];
     int neighbourSize;
-
+    Node* parent = nullptr;
+    bool isVisited = false;
     // OPERATORS
     friend std::ostream& operator<<(std::ostream& os, const Node& node);
 

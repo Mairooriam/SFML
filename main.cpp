@@ -11,42 +11,37 @@
 
 #include "node.hpp"
 
-// Define the CompareNode struct
-struct CompareNode {
-    bool operator()(Node* a, Node* b) const {
-        return a->fCost() > b->fCost(); // Min-heap based on fCost
-    }
-};
+
 Game game;
 int main() {
-    ResourceManager& resourceManager = ResourceManager::getInstance(); // Use Singleton instance
+    // ResourceManager& resourceManager = ResourceManager::getInstance(); // Use Singleton instance
 
-	Node node1(sf::Vector2f(0,0), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);
-	Node node2(sf::Vector2f(1,0), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);;
-	Node node3(sf::Vector2f(0,1), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);;
-	node2.gCost = 10;
-	node1.gCost = 20;
-	node3.gCost = 30;
+	// Node node1(sf::Vector2f(0,0), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);
+	// Node node2(sf::Vector2f(1,0), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);;
+	// Node node3(sf::Vector2f(0,1), resourceManager.getFont("arial"),resourceManager.createSprite16x16("wall_textures",FLOOR_GREEN),&game);;
+	// node2.gCost = 10;
+	// node1.gCost = 20;
+	// node3.gCost = 30;
  
-    //Game game;
+    Game game;
     
-    //game.run();
+    game.run();
 
 
    
- std::priority_queue<Node*, std::vector<Node*>, CompareNode> pq;
+//  std::priority_queue<Node*, std::vector<Node*>, CompareNode> pq;
 
-    // Add the Node objects to the priority queue
-    pq.push(&node1);
-    pq.push(&node2);
-    pq.push(&node3);
+//     // Add the Node objects to the priority queue
+//     pq.push(&node1);
+//     pq.push(&node2);
+//     pq.push(&node3);
 
-    std::cout << "STARTING PRINTING" << "\n";
-    while (!pq.empty()) {
-        Node* node = pq.top();
-        std::cout << *node << std::endl; // Use the << operator
-        pq.pop();
-    }
+//     std::cout << "STARTING PRINTING" << "\n";
+//     while (!pq.empty()) {
+//         Node* node = pq.top();
+//         std::cout << *node << std::endl; // Use the << operator
+//         pq.pop();
+//     }
       return 0;
 
    

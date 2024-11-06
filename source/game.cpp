@@ -1,13 +1,14 @@
 #include "game.hpp"
 
 bool Game::debugEnabled = false; // Define the static member
-AStar pathfinder;
+
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
     worldScale(std::make_shared<int>(128))
+    //pathfinder(this->startNode, this->endNode)
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(3);
+    this->initMap(40);
     //this->updateMapScale();
     this->populateNodeNeighbours();
     
@@ -37,16 +38,19 @@ void Game::run() {
 }
 void Game::handleMouseEvent(sf::Event &event)
 {
-    
-    enableDebug();
-    if (event.type == sf::Event::MouseButtonPressed) {
-        if (event.mouseButton.button == sf::Mouse::Left) {
-            debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
+     // Check mouse button state continuously
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
             debugPrint("Clicked at" + std::to_string(mousePosWorld.x) + std::to_string(mousePosWorld.y));
             // Use getNodePointer to get a pointer to the Node and add it to the map
             this->addNodeToCurrentlyWallNodesMap(map[mousePosWorld.x][mousePosWorld.y].getNodePointer());
+
+    }
+    enableDebug();
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
 
             
         } else if (event.mouseButton.button == sf::Mouse::Right) {
@@ -130,8 +134,6 @@ void Game::handleKeyEvent(sf::Event &event)
                 debugPrint("Game::handleKeyEvent: 2 Key Pressed: Set End node!");
                 break;
             case sf::Keyboard::Num3:
-                map[mousePosWorld.x][mousePosWorld.y].gCost += 1;
-                map[mousePosWorld.x][mousePosWorld.y].hCost += 5;
                 map[mousePosWorld.x][mousePosWorld.y].updateAStarValues();
                 
                 debugPrint("Game::handleKeyEvent: 3 Key Pressed: Updated AStar values!");
@@ -154,9 +156,26 @@ void Game::handleKeyEvent(sf::Event &event)
                 debugPrint("Game::handleKeyEvent: 6 Key Pressed: tempdebug tingy added!");
             break;
             case sf::Keyboard::Space:
-                pathfinder.findPath(startNode,endNode,map);
+                if (startNode && endNode)
+                {
+                    //pathfinder.findPathOneStep();
+                    resetMapAstarValues();
+                    pathfinder.initAStar(startNode,endNode);
+                    std::vector<Node*> path = pathfinder.findPathOneStep();
+                    for (auto &&node : path)
+                    {
+                        node->setColor(sf::Color::Black);
+                    }
+                    
+                    
+                    debugPrint("Game::handleKeyEvent: SPACE Key Pressed: pathfinder RAN");
+                }else
+                {
+                    debugPrint("Game::handleKeyEvent: SPACE Key Pressed: pathfinder DIDNT run");
+                }
                 
-                debugPrint("Game::handleKeyEvent: 6 Key Pressed: tempdebug tingy added!");
+                
+                
             break;
             case sf::Keyboard::Escape:
                 debugPrint("Game::handleKeyEvent: Escape Key Pressed");
@@ -256,6 +275,17 @@ void Game::updateMapOffset()
   
             //map[i][j].updateTextAccordingToSpriteSize();
             //map[i][j].updateSpritePosition();
+        }
+    }
+}
+void Game::resetMapAstarValues()
+{
+    for (size_t i = 0; i < map.size(); ++i) { 
+        for (size_t j = 0; j < map[i].size(); ++j) {
+            map[i][j].gCost = INFINITY;
+            map[i][j].isVisited = false;
+            //map[i][j].nodeType = NODE_EMPTY;
+            map[i][j].parent = nullptr;
         }
     }
 }

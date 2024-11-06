@@ -26,7 +26,10 @@ public:
     float getWorldScale() const { return *worldScale; }
     float getOffsetX() const { return *mapOffsetX; }
     float getOffsetY() const { return *mapOffsetY; }
-
+    
+    // A STAR STUFF
+    Node* startNode;
+    Node* endNode;
 private:
     
     sf::Vector2i mousePosWindow;
@@ -41,8 +44,10 @@ private:
     void updateMousePos(int x, int y);
     void updateCurrentlyWallNodes();
     void updateMapScale();
-
     void updateMapOffset();
+
+    void resetMapAstarValues();
+
     void addNodeToCurrentlyWallNodesMap(Node* node);
     std::unordered_map<sf::Vector2f, Node*, std::hash<sf::Vector2f>> currentlyWallNodesMap;
    
@@ -58,9 +63,7 @@ private:
     std::shared_ptr<float> mapOffsetX = std::make_shared<float>(0);
     std::shared_ptr<float> mapOffsetY = std::make_shared<float>(0);
     
-    // A STAR STUFF
-    Node* startNode;
-    Node* endNode;
+    
 
     // Methods to enable/disable debug printing
     void populateNodeNeighbours();
@@ -75,6 +78,7 @@ private:
     static void enableDebug() { debugEnabled = true; }
     static void disableDebug() { debugEnabled = false; }
     static bool debugEnabled;
+    AStar pathfinder;
 };
 
 #endif // GAME_HPP

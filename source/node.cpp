@@ -203,6 +203,11 @@ void Node::updateNeighbours(Node* top, Node* left, Node* right, Node* bottom,
 
 void Node::updateAStarValues()
 {
+    // Cost from start to current node GCOST
+    // Heuristic cost from current node to goal HCOST
+    this->gCost = static_cast<int>(Utils::getDistanceVector2F(this->position, game->startNode->position)*10);
+    this->hCost = static_cast<int>(Utils::getDistanceVector2F(this->position, game->endNode->position)*10);
+    fCost();
     gCostText.setString(floatToStringWithPrecision(gCost,0));
     hCostText.setString(floatToStringWithPrecision(hCost,0));
     fCostText.setString(floatToStringWithPrecision(fCost(),0));
