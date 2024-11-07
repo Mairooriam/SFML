@@ -18,7 +18,9 @@ public:
     void printMap();
     void run();
     void drawMap();
-
+    void drawPathStep(Node* step);
+    void drawPathAnimation();
+    void drawPathFull(std::vector<Node*>& path);
     sf::RenderWindow& getRenderWindow();
     std::vector<std::vector<Node>>& getMap();
     int tempDebugthingy = 0;
@@ -28,10 +30,10 @@ public:
     float getOffsetY() const { return *mapOffsetY; }
     
     // A STAR STUFF
-    Node* startNode;
-    Node* endNode;
+    Node* startNode = nullptr;
+    Node* endNode = nullptr;
 private:
-    
+    sf::Time accumulatedTime;
     sf::Vector2i mousePosWindow;
     sf::Vector2i mousePosWorld;
     std::shared_ptr<int> worldScale; // Use shared_ptr for worldScale
@@ -46,12 +48,13 @@ private:
     void updateMapScale();
     void updateMapOffset();
 
-    void resetMapAstarValues();
+    void resetMap();
 
     void addNodeToCurrentlyWallNodesMap(Node* node);
     std::unordered_map<sf::Vector2f, Node*, std::hash<sf::Vector2f>> currentlyWallNodesMap;
    
     void render();
+
     sf::RenderWindow window;
     sf::View view; // Add a view for panning and zooming
     Node& getNodeAtPosition();
@@ -78,7 +81,12 @@ private:
     static void enableDebug() { debugEnabled = true; }
     static void disableDebug() { debugEnabled = false; }
     static bool debugEnabled;
+    
+    // A START STUFF
     AStar pathfinder;
+    std::vector<Node*> path;
+    int pathAnimationCounter = 0;
+    bool animationON;
 };
 
 #endif // GAME_HPP

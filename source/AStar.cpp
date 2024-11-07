@@ -12,7 +12,7 @@ void AStar::initAStar(Node *startNode, Node *goalNode)
 
 std::vector<Node *> AStar::findPathOneStep()
 {
-
+    disableDebug();
     while (!openNodes.empty()) {
         Node* currentNode = openNodes.top();
         openNodes.pop();
@@ -60,9 +60,14 @@ std::vector<Node *> AStar::findPathOneStep()
     debugPrint("AStar::findPathOneStep: DIDNT FIND PATH!");
     return std::vector<Node*>();
 }
-    
 
-
+void AStar::resetPathFinder()
+{
+    goalNode = nullptr; // Reset the goalNode pointer to nullptr
+    openNodes = PriorityQueue<Node*>(); // Reinitialize the priority queue to an empty one
+    openNodesSet.clear(); // Clear the unordered set
+    closedNodes.clear(); // Clear the unordered set
+}
 
 float AStar::heuristic(const Node *a, const Node *b)
 {

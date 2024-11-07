@@ -13,16 +13,22 @@ std::string floatToStringWithPrecision(float value, int precision) {
     return out.str();
 }
 
-Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, Game* game) 
-    : position(position), 
+Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, Game* game)
+    : position(position),
     font(font),
     game(game)
 
     { // Use initializer list
-    enableDebug();
+
     setSprite(sprite);
     updateSpriteScale(game->getWorldScale());
+    gCost = INFINITY;
+    hCost = INFINITY;
+
     debugPrint("NODE INIT DONE: worldscale:" + std::to_string(game->getWorldScale()) + std::to_string(position.x));
+
+
+
     text.setFont(font);
     text.setCharacterSize(32); // Set character size
     text.setOutlineColor(sf::Color::Black);
@@ -30,7 +36,7 @@ Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, Game* game)
     text.setFillColor(sf::Color::White); // Set text color
      // Set text position
     text.setString("("+std::to_string(int(position.x)) + ", " + std::to_string(int(position.y))+ ")");
-    
+
     fCostText.setFont(font);
     fCostText.setCharacterSize(32); // Set character size
     fCostText.setOutlineColor(sf::Color::Black);
@@ -50,11 +56,11 @@ Node::Node(sf::Vector2f position, sf::Font& font, sf::Sprite sprite, Game* game)
     gCostText.setOutlineThickness(0.5);
     gCostText.setFillColor(sf::Color::White); // Set text color
     updateTextAccordingToSpriteSize();
-    disableDebug();
+
     // Additional initialization if needed
 }
 
-// GET METHODS   
+// GET METHODS
 sf::Vector2f Node::getPosition() const {
     return this->position; // Function definition
 }
@@ -91,13 +97,14 @@ void Node::cycleTextures()
     {
         debugTextureIndex = 0;
     }
-    
+
     this->updateTexture(debugTextureIndex);
     this->nodeType = NODE_WALL;
-    debugTextureIndex++; 
+    debugTextureIndex++;
 }
 void Node::updateTextAccordingToSpriteSize()
 {
+    disableDebug();
     float worldScale = game->getWorldScale();
     float rowHeight = worldScale / 3.0f; // Divide the sprite height into 3 rows
 
@@ -133,7 +140,7 @@ void Node::updateTextAccordingToSpriteSize()
     debugPrint("Node::updateTextAccordingToSpriteSize: Text position updated to: (" + std::to_string(text.getPosition().x) + ", " + std::to_string(text.getPosition().y) + ")");
 }
 void Node::updateSpritePositionAccordingToWorldscale()
-{   
+{
     enableDebug();
     std::pair posWorld = getScreenSpacePosition();
     Sprite.setPosition(posWorld.first,posWorld.second);
@@ -158,6 +165,10 @@ sf::Text Node::fIntoText(float val)
 void Node::draw(sf::RenderWindow &window)
 {
     window.draw(this->Sprite);
+
+}
+void Node::drawText(sf::RenderWindow &window)
+{
     window.draw(this->text);
     window.draw(this->gCostText);
     window.draw(this->hCostText);
@@ -171,7 +182,7 @@ bool Node::isOfNodeType(NodeType input) const
     else{
          return false;
     }
-   
+
 }
 
 std::string Node::toString() const
@@ -227,7 +238,7 @@ void Node::updateWallTextureAccordingToNeighbours()
 }
 void Node::updateTexture(int textureIndex)
 {
-    this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8)); 
+    this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8));
 }
 void Node::updateNeighbourBitSet(){
     neighbourSize = 0;
@@ -260,14 +271,14 @@ void Node::printNeighbourBitSet()
     this->printNodeInfo();
     std::cout <<"Bitset INT: "<< this->getNeighbourBitSet() << " Binary from [0][1][2][4] [top][left][right][bottom]: "
     << neighbourBitSet[0]
-    << neighbourBitSet[1] 
-    << neighbourBitSet[2] 
-    << neighbourBitSet[3] 
+    << neighbourBitSet[1]
+    << neighbourBitSet[2]
+    << neighbourBitSet[3]
     << neighbourBitSet[4]
-    << neighbourBitSet[5] 
+    << neighbourBitSet[5]
     << neighbourBitSet[6]
-    << neighbourBitSet[7]  
-    <<"\n"; 
+    << neighbourBitSet[7]
+    <<"\n";
 }
 void Node::printNodeInfo()
 {
@@ -291,6 +302,12 @@ void Node::setTextureRect(sf::IntRect rect)
 {
     this->Sprite.setTextureRect(rect);
 }
+void Node::setNodeDefault()
+{
+    this->setTextureRect(resourceManager.getTextureRect(FLOOR_GREEN,16,8,8));
+    this->nodeType = NODE_EMPTY;
+    this->Sprite.setColor(sf::Color::White);
+}
 void Node::updateSpriteScale(float scale)
 {
     float multiplier = scale / 16;
@@ -309,6 +326,10 @@ void Node::updateSpriteScale(float scale)
 void Node::setColor(sf::Color color)
 {
     Sprite.setColor(color);
+}
+void Node::setNodePath()
+{
+    this->setColor(sf::Color::Black);
 }
 void Node::setSprite(sf::Sprite sprite)
 {

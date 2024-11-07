@@ -123,15 +123,31 @@ void Game::handleKeyEvent(sf::Event &event)
                 printMap();
                 debugPrint("Game::handleKeyEvent: G Key Pressed");
                 break;
+            case sf::Keyboard::C:
+                resetMap();
+                debugPrint("Game::handleKeyEvent: C Key Pressed-> resetting map");
+                break;
             case sf::Keyboard::Num1:
-                startNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
-                startNode->setColor(sf::Color::Cyan);
-                debugPrint("Game::handleKeyEvent: 1 Key Pressed: Set Starting node!");
+                if (startNode == nullptr){
+                    startNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
+                    startNode->setColor(sf::Color::Cyan);
+                    debugPrint("Game::handleKeyEvent: 1 Key Pressed: Set Starting node!");
+                }else{
+                    debugPrint("Game::handleKeyEvent: 1 Key Pressed: There is already startNode!");
+                }
+                
+
+                
                 break;
             case sf::Keyboard::Num2:
-                endNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
-                endNode->setColor(sf::Color::Red);
-                debugPrint("Game::handleKeyEvent: 2 Key Pressed: Set End node!");
+                if (endNode == nullptr){
+                    endNode = map[mousePosWorld.x][mousePosWorld.y].getNodePointer();
+                    endNode->setColor(sf::Color::Red);
+                    debugPrint("Game::handleKeyEvent: 2 Key Pressed: Set End node!");
+                }else{
+                    debugPrint("Game::handleKeyEvent: 2 Key Pressed: There is already endNode!");
+                }
+                
                 break;
             case sf::Keyboard::Num3:
                 map[mousePosWorld.x][mousePosWorld.y].updateAStarValues();
@@ -159,15 +175,11 @@ void Game::handleKeyEvent(sf::Event &event)
                 if (startNode && endNode)
                 {
                     //pathfinder.findPathOneStep();
-                    resetMapAstarValues();
+                    pathfinder.resetPathFinder();
                     pathfinder.initAStar(startNode,endNode);
-                    std::vector<Node*> path = pathfinder.findPathOneStep();
-                    for (auto &&node : path)
-                    {
-                        node->setColor(sf::Color::Black);
-                    }
-                    
-                    
+                    path = pathfinder.findPathOneStep();
+                    //drawPathFull(path);
+                    animationON = true;
                     debugPrint("Game::handleKeyEvent: SPACE Key Pressed: pathfinder RAN");
                 }else
                 {
@@ -247,8 +259,20 @@ void Game::updateCurrentlyWallNodes()
 }
 void Game::update(sf::Time deltaTime)
 {
-    // Update game state here
-    // For example, you can update the positions of game objects
+    accumulatedTime += deltaTime;
+    // Check if one second has passed
+    if (accumulatedTime >= sf::seconds(1.f)) {
+        // Perform actions that should run every second
+        if (animationON)
+        {
+            drawPathAnimation();
+        }
+        
+
+        // Reset the accumulated time
+        accumulatedTime -= sf::seconds(1.f);
+    }
+    
 }
 Node &Game::getNodeAtPosition()
 {
@@ -278,14 +302,19 @@ void Game::updateMapOffset()
         }
     }
 }
-void Game::resetMapAstarValues()
+void Game::resetMap()
 {
+    startNode = nullptr;
+    endNode = nullptr;
+    
     for (size_t i = 0; i < map.size(); ++i) { 
         for (size_t j = 0; j < map[i].size(); ++j) {
             map[i][j].gCost = INFINITY;
+            map[i][j].hCost = INFINITY;
             map[i][j].isVisited = false;
-            //map[i][j].nodeType = NODE_EMPTY;
             map[i][j].parent = nullptr;
+            map[i][j].setNodeDefault();
+
         }
     }
 }
@@ -330,6 +359,33 @@ void Game::drawMap() {
 
     
     //std::cout << "DRAWING MAP\n" << "map size: " << map.size() << "\n" ;
+}
+
+void Game::drawPathStep(Node* step)
+{
+    step->setNodePath();
+}
+
+void Game::drawPathAnimation()
+{
+    enableDebug();
+    debugPrint("COUNTER: " + std::to_string(pathAnimationCounter) + "Path Size" + std::to_string(path.size()));
+        if (pathAnimationCounter <= path.size() -1){
+            path[pathAnimationCounter]->setNodePath();
+            pathAnimationCounter += 1;
+        }else{
+            animationON = false;
+            pathAnimationCounter = 0;
+        }
+}
+
+void Game::drawPathFull(std::vector<Node *> &path)
+{
+    for (auto &&node : path)
+    {
+        node->setNodePath();
+
+    }
 }
 
 sf::RenderWindow &Game::getRenderWindow()

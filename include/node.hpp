@@ -25,8 +25,10 @@ public:
     void setSprite(sf::Sprite sprite);
     void setNodeWall();
     void setTextureRect(sf::IntRect rect);
+    void setNodeDefault();
     void updateSpriteScale(float scale);
     void setColor(sf::Color color);
+    void setNodePath();
     sf::Vector2f getPosition() const; // Function declaration
 
     NodeType getNodeType();
@@ -54,6 +56,7 @@ public:
     
     sf::Text fIntoText(float val);
     void draw(sf::RenderWindow& window);
+    void drawText(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
     int getNeighboursNodeType() const;
     NodeType nodeType;

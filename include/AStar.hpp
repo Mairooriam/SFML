@@ -29,7 +29,7 @@ public:
             copy.pop();
         }
     }
-
+    void resetPathFinder();
     
 private:
     Node* goalNode;
