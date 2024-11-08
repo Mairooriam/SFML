@@ -8,7 +8,7 @@ Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
     //pathfinder(this->startNode, this->endNode)
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(40);
+    this->initMap(5);
     //this->updateMapScale();
     this->populateNodeNeighbours();
     
@@ -33,6 +33,7 @@ void Game::run() {
         window.clear();
         // Render the game here
         drawMap();
+        drawMapText();
         window.display();
     }
 }
@@ -363,6 +364,16 @@ void Game::drawMap() {
 
     
     //std::cout << "DRAWING MAP\n" << "map size: " << map.size() << "\n" ;
+}
+
+void Game::drawMapText()
+{
+    for (size_t i = 0; i < map.size(); ++i) { // Use size() to get the number of rows
+        for (size_t j = 0; j < map[i].size(); ++j) { // Use size() to get the number of columns
+            // Assuming Node has a draw method that takes a window reference
+            map[i][j].drawText(window);
+        }
+    }
 }
 
 void Game::drawPathStep(Node* step)

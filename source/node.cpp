@@ -339,6 +339,7 @@ void Node::setSprite(sf::Sprite sprite)
 
 // OPERATORS
 std::ostream& operator<<(std::ostream& os, const Node& node) {
-    os << "Node(position: (" << node.position.x << ", " << node.position.y << "), fCost: " << node.fCost() << ")";
+    os << "Node(position: (" << node.position.x << ", " << node.position.y << "), fCost: " << node.fCost() 
+    << ", hCost: " << node.hCost << ", gCost: " << node.gCost << ")";
     return os;
 }

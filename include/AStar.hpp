@@ -7,11 +7,7 @@
 #include <unordered_set>
 #include <cmath>
 // Define the CompareNode struct
-struct CompareNode {
-    bool operator()(Node* a, Node* b) const {
-        return a->fCost() > b->fCost(); // Min-heap based on fCost
-    }
-};
+
 class Node;
 class AStar {
 public:
@@ -22,6 +18,7 @@ public:
         // Create a copy of the priority queue
         PriorityQueue<Node*> copy = openNodes;
         
+        //std::cout << "STARTING PRINTING" << "\n";
         while (!copy.empty()) {
             Node* node = copy.top();
             std::cout << *node << std::endl; // Use the << operator

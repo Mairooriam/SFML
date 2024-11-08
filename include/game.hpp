@@ -18,6 +18,7 @@ public:
     void printMap();
     void run();
     void drawMap();
+    void drawMapText();
     void drawPathStep(Node* step);
     void drawPathAnimation();
     void drawPathFull(std::vector<Node*>& path);

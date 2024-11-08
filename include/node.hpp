@@ -77,6 +77,11 @@ public:
     // OPERATORS
     friend std::ostream& operator<<(std::ostream& os, const Node& node);
 
+        // Comparator for priority queue
+    bool operator>(const Node& other) const {
+        return this->fCost() > other.fCost();
+    }
+
 private:
     sf::Vector2f position;
 
