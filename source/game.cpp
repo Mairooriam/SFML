@@ -120,11 +120,15 @@ void Game::handleKeyEvent(sf::Event &event)
                 debugPrint("Game::handleKeyEvent: D Key Pressed");
                 break;
              case sf::Keyboard::G:
-                printMap();
+                if (startNode && endNode){
+                    
+                    pathfinder.initAStar(startNode,endNode);
+                }
                 debugPrint("Game::handleKeyEvent: G Key Pressed");
                 break;
             case sf::Keyboard::C:
                 resetMap();
+                pathfinder.resetPathFinder();
                 debugPrint("Game::handleKeyEvent: C Key Pressed-> resetting map");
                 break;
             case sf::Keyboard::Num1:
@@ -175,8 +179,8 @@ void Game::handleKeyEvent(sf::Event &event)
                 if (startNode && endNode)
                 {
                     //pathfinder.findPathOneStep();
-                    pathfinder.resetPathFinder();
-                    pathfinder.initAStar(startNode,endNode);
+                    
+                    
                     path = pathfinder.findPathOneStep();
                     //drawPathFull(path);
                     animationON = true;
@@ -369,14 +373,18 @@ void Game::drawPathStep(Node* step)
 void Game::drawPathAnimation()
 {
     enableDebug();
-    debugPrint("COUNTER: " + std::to_string(pathAnimationCounter) + "Path Size" + std::to_string(path.size()));
-        if (pathAnimationCounter <= path.size() -1){
+    
+    debugPrint("Game::drawPathAnimation : COUNTER: " + std::to_string(pathAnimationCounter) + "Path Size" + std::to_string(path.size()));
+
+        if (pathAnimationCounter <= path.size() & path.size() < 0){
+            
             path[pathAnimationCounter]->setNodePath();
             pathAnimationCounter += 1;
         }else{
             animationON = false;
             pathAnimationCounter = 0;
         }
+   
 }
 
 void Game::drawPathFull(std::vector<Node *> &path)

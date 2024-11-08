@@ -12,14 +12,14 @@ void AStar::initAStar(Node *startNode, Node *goalNode)
 
 std::vector<Node *> AStar::findPathOneStep()
 {
-    disableDebug();
-    while (!openNodes.empty()) {
-        Node* currentNode = openNodes.top();
+    printOpenNodes();
+    enableDebug();
+    if (!openNodes.empty()) {
+        currentNode = openNodes.top();
         openNodes.pop();
         openNodesSet.erase(currentNode); // Remove from set
 
         if (currentNode == goalNode) {
-            std::vector<Node*> path;
             while (currentNode != nullptr) {
                 path.push_back(currentNode);
                 currentNode = currentNode->parent;
@@ -30,30 +30,36 @@ std::vector<Node *> AStar::findPathOneStep()
         }
 
         closedNodes.insert(currentNode);
-
+        currentNode->setColor(sf::Color::Blue);
         for (Node* neighbour : currentNode->neighbours) {
             if (neighbour == nullptr) {
+                debugPrint("AStar::findPathOneStep: Neighbour is nullprt!");
                 continue;
             }
             
             if (closedNodes.find(neighbour) != closedNodes.end() || neighbour->getNodeType() == NODE_WALL) {
+                debugPrint("AStar::findPathOneStep: Neighbour is CLOSED OR WALL!" + neighbour->toString());
                 continue;
             }
             
             float tentativeGCost = currentNode->gCost + heuristic(currentNode, neighbour);
             
             if (tentativeGCost < neighbour->gCost) {
-                debugPrint("MAIN LOOP" + std::to_string(tentativeGCost));
+                //debugPrint("MAIN LOOP" + std::to_string(tentativeGCost));
                 neighbour->parent = currentNode;
                 neighbour->gCost = tentativeGCost;
                 neighbour->hCost = heuristic(neighbour, goalNode);
 
                 if (openNodesSet.find(neighbour) == openNodesSet.end()) { // Check using set
+                    neighbour->setColor(sf::Color::Cyan);
                     openNodes.push(neighbour);
                     openNodesSet.insert(neighbour); // Add to set
                 }
             }
         }
+        debugPrint("AStar::findPathOneStep: OPENNODES");
+        printOpenNodes();
+        
     }
 
 

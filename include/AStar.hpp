@@ -22,7 +22,6 @@ public:
         // Create a copy of the priority queue
         PriorityQueue<Node*> copy = openNodes;
         
-        std::cout << "STARTING PRINTING" << "\n";
         while (!copy.empty()) {
             Node* node = copy.top();
             std::cout << *node << std::endl; // Use the << operator
@@ -33,6 +32,8 @@ public:
     
 private:
     Node* goalNode;
+    Node* currentNode = nullptr;
+    std::vector<Node*> path;
     PriorityQueue<Node*> openNodes;
     std::unordered_set<Node*> openNodesSet;
     std::unordered_set<Node*> closedNodes;
