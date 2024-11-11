@@ -5,7 +5,9 @@ bool AStar::debugEnabled = true; // Define the static member
 void AStar::initAStar(Node *startNode, Node *goalNode)
 {   
     this->goalNode = goalNode;
-    startNode->updateAStarValues();
+    startNode->gCost=0;
+    startNode->hCost = heuristic(startNode,goalNode);
+    startNode->updateTextString();
     openNodesSet.insert(startNode); // Add to set
     openNodes.push(startNode);
 }
@@ -22,8 +24,10 @@ std::vector<Node *> AStar::findPathOneStep()
 
         if (currentNode == goalNode) {
             while (currentNode != nullptr) {
+                currentNode->setColor(sf::Color::Blue);
                 path.push_back(currentNode);
                 currentNode = currentNode->parent;
+                
             }
             std::reverse(path.begin(), path.end());
             debugPrint("AStar::findPathOneStep: FOUND PATH!");
@@ -53,7 +57,7 @@ std::vector<Node *> AStar::findPathOneStep()
 
                 if (openNodesSet.find(neighbour) == openNodesSet.end()) { // Check using set
                     neighbour->setColor(sf::Color::Cyan);
-                    neighbour->updateAStarValues();
+                    neighbour->updateTextString();
                     openNodes.push(neighbour);
                     openNodesSet.insert(neighbour); // Add to set
                 }
@@ -78,9 +82,11 @@ void AStar::resetPathFinder()
     closedNodes.clear(); // Clear the unordered set
 }
 
-float AStar::heuristic(const Node *a, const Node *b)
-{
-    return std::abs(a->getPosition().x - b->getPosition().x) + std::abs(a->getPosition().y - b->getPosition().y);
+int AStar::heuristic(const Node* a, const Node* b) {
+    float scale = 10.0;
+    float dx = std::abs(a->getPosition().x*scale - b->getPosition().x*scale);
+    float dy = std::abs(a->getPosition().y*scale - b->getPosition().y*scale);
+    return dx + dy + (std::sqrt(2) - 2) * std::min(dx, dy);
 }
 
 

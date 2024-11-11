@@ -43,7 +43,7 @@ public:
     void printNeighbours() const;
 
     void update();
-    void updateAStarValues();
+    void updateAStarValues2();
     void updateWallTextureAccordingToNeighbours();
     void updateTexture(int textureIndex);
     void updateNeighbours(Node* top, Node* left, Node* right, Node* bottom,Node* topLeft, Node* topRight, Node* bottomLeft, Node* bottomRight);
@@ -51,6 +51,7 @@ public:
     void updateTextAccordingToSpriteSize();
     void updateSpritePositionAccordingToWorldscale();
     void updateSpritePositionAccordingToOffset();
+    void updateTextString();
     void cycleTextures();
     
     

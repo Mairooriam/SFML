@@ -155,7 +155,6 @@ void Game::handleKeyEvent(sf::Event &event)
                 
                 break;
             case sf::Keyboard::Num3:
-                map[mousePosWorld.x][mousePosWorld.y].updateAStarValues();
                 
                 debugPrint("Game::handleKeyEvent: 3 Key Pressed: Updated AStar values!");
                 break;
@@ -183,8 +182,10 @@ void Game::handleKeyEvent(sf::Event &event)
                     
                     
                     path = pathfinder.findPathOneStep();
-                    //drawPathFull(path);
-                    animationON = true;
+                    if (path != std::vector<Node*>()){
+                        animationON = true;
+                    }
+                    
                     debugPrint("Game::handleKeyEvent: SPACE Key Pressed: pathfinder RAN");
                 }else
                 {
@@ -264,7 +265,10 @@ void Game::updateCurrentlyWallNodes()
 }
 void Game::update(sf::Time deltaTime)
 {
+    //disableDebug();
     accumulatedTime += deltaTime;
+    //debugPrint("Game::update: accmulated" + std::to_string(accumulatedTime.asMilliseconds()) + "ms");
+    //debugPrint("Game::update: deltatime" + std::to_string(deltaTime.asMilliseconds()) + "ms");
     // Check if one second has passed
     if (accumulatedTime >= sf::seconds(1.f)) {
         // Perform actions that should run every second
@@ -319,6 +323,8 @@ void Game::resetMap()
             map[i][j].isVisited = false;
             map[i][j].parent = nullptr;
             map[i][j].setNodeDefault();
+            map[i][j].updateTextString();
+            
 
         }
     }
@@ -387,11 +393,15 @@ void Game::drawPathAnimation()
     
     debugPrint("Game::drawPathAnimation : COUNTER: " + std::to_string(pathAnimationCounter) + "Path Size" + std::to_string(path.size()));
 
-        if (pathAnimationCounter <= path.size() & path.size() < 0){
-            
+        if (pathAnimationCounter <= path.size() & path.size() > 0){
+            debugPrint("Game::drawPathAnimation : Inisde counter incrimentr");
             path[pathAnimationCounter]->setNodePath();
             pathAnimationCounter += 1;
-        }else{
+        }
+        
+        if(pathAnimationCounter == path.size())
+        {
+            debugPrint("Game:DrawPathAnimation: Animation done setting animation off");
             animationON = false;
             pathAnimationCounter = 0;
         }
