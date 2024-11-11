@@ -34,7 +34,7 @@ private:
     PriorityQueue<Node*> openNodes;
     std::unordered_set<Node*> openNodesSet;
     std::unordered_set<Node*> closedNodes;
-    static int heuristic(const Node* a, const Node* b);
+    static float heuristic(const Node* a, const Node* b);
     static std::vector<Node*> getNeighbours(Node* node, const std::vector<std::vector<Node>>& grid);
 
 

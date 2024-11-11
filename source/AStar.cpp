@@ -82,11 +82,10 @@ void AStar::resetPathFinder()
     closedNodes.clear(); // Clear the unordered set
 }
 
-int AStar::heuristic(const Node* a, const Node* b) {
-    float scale = 10.0;
-    float dx = std::abs(a->getPosition().x*scale - b->getPosition().x*scale);
-    float dy = std::abs(a->getPosition().y*scale - b->getPosition().y*scale);
-    return dx + dy + (std::sqrt(2) - 2) * std::min(dx, dy);
+float AStar::heuristic(const Node* a, const Node* b) {
+    float dx = std::abs(a->getPosition().x - b->getPosition().x);
+    float dy = std::abs(a->getPosition().y - b->getPosition().y);
+    return std::sqrt(dx*dx + dy*dy);
 }
 
 
