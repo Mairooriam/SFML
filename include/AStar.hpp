@@ -12,8 +12,8 @@ class Node;
 class AStar {
 public:
     void initAStar(Node* startNode, Node* goalNode);
-    std::vector<Node*> findPathOneStep();
-    
+    std::vector<Node*> findPathOneStep(bool mode);
+    bool processNextNode();
     void printOpenNodes() const {
         // Create a copy of the priority queue
         PriorityQueue<Node*> copy = openNodes;

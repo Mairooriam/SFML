@@ -11,12 +11,35 @@ void AStar::initAStar(Node *startNode, Node *goalNode)
     openNodesSet.insert(startNode); // Add to set
     openNodes.push(startNode);
 }
-
-std::vector<Node *> AStar::findPathOneStep()
-{
+std::vector<Node*> AStar::findPathOneStep(bool mode) {
     std::cout << " OPEN NODES AT START: \n";
     printOpenNodes();
     enableDebug();
+
+    // If mode is true, use a loop to find the path
+    if (mode) {
+        while (!openNodes.empty()) {
+            if (processNextNode()) {
+                return path;
+            }
+        }
+    } else {
+        // If mode is false, process only one step
+        if (!openNodes.empty()) {
+            if (processNextNode()) {
+                return path;
+            }
+        }
+    }
+
+    debugPrint("AStar::findPathOneStep: DIDNT FIND PATH!\n\n");
+    return std::vector<Node*>();
+}
+bool AStar::processNextNode()
+{
+    std::cout << " OPEN NODES AT START: \n";
+    printOpenNodes();
+    enableDebug();    
     if (!openNodes.empty()) {
         currentNode = openNodes.top();
         openNodes.pop();
@@ -31,7 +54,7 @@ std::vector<Node *> AStar::findPathOneStep()
             }
             std::reverse(path.begin(), path.end());
             debugPrint("AStar::findPathOneStep: FOUND PATH!");
-            return path;
+            return true;
         }
         debugPrint("CLOSING NODE: " + currentNode->toString());
         closedNodes.insert(currentNode);
@@ -63,6 +86,7 @@ std::vector<Node *> AStar::findPathOneStep()
                 }
             }
         }
+        
         debugPrint("AStar::findPathOneStep: OPENNODES END");
 
         printOpenNodes();
@@ -71,7 +95,7 @@ std::vector<Node *> AStar::findPathOneStep()
 
 
     debugPrint("AStar::findPathOneStep: DIDNT FIND PATH!\n\n");
-    return std::vector<Node*>();
+    return false;
 }
 
 void AStar::resetPathFinder()
@@ -80,6 +104,7 @@ void AStar::resetPathFinder()
     openNodes = PriorityQueue<Node*>(); // Reinitialize the priority queue to an empty one
     openNodesSet.clear(); // Clear the unordered set
     closedNodes.clear(); // Clear the unordered set
+    path.clear();
 }
 
 float AStar::heuristic(const Node* a, const Node* b) {

@@ -4,13 +4,18 @@ bool Game::debugEnabled = false; // Define the static member
 
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
-    worldScale(std::make_shared<int>(128))
+    worldScale(std::make_shared<int>(128)),
+    overlay(sf::Vector2f(200, 600), {10, 10, 80, 60}) // Initialize DebugOverlay
     //pathfinder(this->startNode, this->endNode)
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
     this->initMap(5);
     //this->updateMapScale();
     this->populateNodeNeighbours();
+
+    overlay.setText(0, 0, "Hello");
+    overlay.setButton(0, 1, "Click Me");
+    overlay.setEditable(1, 1, true);
     
 }
 
@@ -20,6 +25,11 @@ void Game::run() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                overlay.handleClick(sf::Mouse::getPosition(window));
+            } else if (event.type == sf::Event::KeyPressed) {
+                overlay.handleKeyPress(event.key);
             }
             handleMouseEvent(event);
             handleKeyEvent(event);
@@ -34,6 +44,7 @@ void Game::run() {
         // Render the game here
         drawMap();
         drawMapText();
+        overlay.draw(window); // Draw the overlay
         window.display();
     }
 }
@@ -181,7 +192,7 @@ void Game::handleKeyEvent(sf::Event &event)
                     //pathfinder.findPathOneStep();
                     
                     
-                    path = pathfinder.findPathOneStep();
+                    path = pathfinder.findPathOneStep(true);
                     if (path != std::vector<Node*>()){
                         animationON = true;
                     }
