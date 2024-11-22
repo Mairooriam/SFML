@@ -1,12 +1,12 @@
 #include "debugOverlay.hpp"
 #include <iostream>
 
-DebugOverlay::DebugOverlay(const sf::Vector2f& size, const GridConfig& config)
+DebugOverlay::DebugOverlay(const GridConfig& config)
     : gridConfig(config) {
     font = resourceManager.getFont("arial");
 
     // Initialize the render texture
-    overlayTexture.create(static_cast<unsigned int>(size.x), static_cast<unsigned int>(size.y));
+    overlayTexture.create(config.cellWidth * config.cols, config.cellHeight * config.rows);
 
     // Initialize the grid
     initializeGrid();
@@ -21,7 +21,10 @@ void DebugOverlay::initializeGrid() {
             cell.background.setSize(sf::Vector2f(gridConfig.cellWidth, gridConfig.cellHeight));
             cell.background.setPosition(getCellPosition(row, col));
             cell.background.setFillColor(sf::Color(255, 0, 0, 255)); // Solid background
+            cell.background.setOutlineColor(sf::Color::Black);
+            cell.background.setOutlineThickness(1.0f);
 
+           
             cell.text.setFont(font);
             cell.text.setCharacterSize(static_cast<unsigned int>(calculateFontSize()));
             cell.text.setFillColor(sf::Color::White);

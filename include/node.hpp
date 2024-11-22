@@ -89,7 +89,7 @@ private:
     int debugTextureIndex = 0;
     
     
-    std::bitset<8> neighbourBitSet{0};
+    std::bitset<4> neighbourBitSet{0};
     
     sf::Sprite Sprite;
     sf::Font& font;

@@ -7,7 +7,7 @@
 #include "operatorUtils.hpp"
 #include <memory> // Include the memory header for std::shared_ptr
 #include "AStar.hpp"
-#include "debugOverlay.hpp"
+
 class Game {
 public:
     static Game& getInstance() {
@@ -39,7 +39,7 @@ private:
     sf::Vector2i mousePosWindow;
     sf::Vector2i mousePosWorld;
     std::shared_ptr<int> worldScale; // Use shared_ptr for worldScale
-    DebugOverlay overlay; // Add DebugOverlay member
+    bool mouseOneDown = false;
 
     void handleMouseEvent(sf::Event& event);
     void handleKeyEvent(sf::Event &event);

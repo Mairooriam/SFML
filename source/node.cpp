@@ -233,31 +233,83 @@ void Node::updateWallTextureAccordingToNeighbours()
     debugPrint("Node::updateWallTextureAccordingToNeighbours Node at position: [" + std::to_string(this->position.x) + ", " + std::to_string(this->position.y) + "] updated wall into wallCheckResult: " + std::to_string(wallCheckResult));
     switch (wallCheckResult)
     {
-    // SINGLE WALL ON ANY SIDE
-    case 1:
-        // WALL AT TOP
+    // TOP OR BOT
+    case 8:
         this->updateTexture(WALL_VERTICAL);
         break;
+    case 9:
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    case 1:
+        this->updateTexture(WALL_VERTICAL);
+        break;
+    // LEFT OR RIGHT
+    case 2:
+        this->updateTexture(WALL_HORIZONTAL);
+        break;
+    case 4:
+        this->updateTexture(WALL_HORIZONTAL);
+        break;
+    case 6:
+        this->updateTexture(WALL_HORIZONTAL);
+        break;  
+
+    // JUNCTIONS
+    case 15:
+        this->updateTexture(WALL_JUNCTION);
+        break;
+    case 11:
+        this->updateTexture(WALL_JUNCTION_TOP_LEFT_BOTTOM);
+        break;
+    case 13:
+        this->updateTexture(WALL_JUNCTION_TOP_RIGHT_BOTTOM);
+        break;
+    case 7:
+        this->updateTexture(WALL_JUNCTION_LEFT_TOP_RIGHT);
+        break;
+    case 14:
+        this->updateTexture(WALL_JUNCTION_LEFT_BOTTOM_RIGHT);
+        break;
+
+
+    // CORNERS
+    case 10:
+        this->updateTexture(WALL_CORNER_TOP_RIGHT);
+        break;
+    case 5:
+        this->updateTexture(WALL_CORNER_BOTTOM_LEFT);
+        break;
+    case 12:
+        this->updateTexture(WALL_CORNER_TOP_LEFT);
+        break;
+    case 3:
+        this->updateTexture(WALL_CORNER_BOTTOM_RIGHT);
+        break;
     }
+
+    
 }
 void Node::updateTexture(int textureIndex)
 {
     this->Sprite.setTextureRect(resourceManager.getTextureRect(textureIndex,16,8,8));
 }
 void Node::updateNeighbourBitSet(){
-    neighbourSize = 0;
-    for (size_t i = 0; i < 8; ++i) {
+    std::array<size_t, 4> indices = {1, 3, 4, 6};
+    size_t j = 0;
+    for (size_t i : indices) {
         if (this->neighbours[i] != nullptr) {
             if (this->neighbours[i]->isOfNodeType(NODE_WALL)) {
-                this->neighbourBitSet.set(i);
-                neighbourSize += 1;
+                this->neighbourBitSet.set(j);
             } else {
-                this->neighbourBitSet.reset(i);
+                this->neighbourBitSet.reset(j);
             }
         } else {
-            this->neighbourBitSet.reset(i);
+            this->neighbourBitSet.reset(j);
         }
+        j++;
     }
+  
+    
 }
 // PRINT METHODS
 void Node::printNeighbours() const
@@ -273,7 +325,7 @@ void Node::printNeighbours() const
 void Node::printNeighbourBitSet()
 {
     this->printNodeInfo();
-    std::cout <<"Bitset INT: "<< this->getNeighbourBitSet() << " Binary from [0][1][2][4] [top][left][right][bottom]: "
+    std::cout <<"Bitset INT: "<< this->getNeighbourBitSet() << " Binary from [0][1][2][4][5][6][7] [xxx][top][xxx][left][right][xxx][bottom][x]: "
     << neighbourBitSet[0]
     << neighbourBitSet[1]
     << neighbourBitSet[2]

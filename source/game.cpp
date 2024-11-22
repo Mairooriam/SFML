@@ -4,18 +4,12 @@ bool Game::debugEnabled = false; // Define the static member
 
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
-    worldScale(std::make_shared<int>(128)),
-    overlay(sf::Vector2f(200, 600), {10, 10, 80, 60}) // Initialize DebugOverlay
-    //pathfinder(this->startNode, this->endNode)
+    worldScale(std::make_shared<int>(128))
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
     this->initMap(5);
     //this->updateMapScale();
     this->populateNodeNeighbours();
-
-    overlay.setText(0, 0, "Hello");
-    overlay.setButton(0, 1, "Click Me");
-    overlay.setEditable(1, 1, true);
     
 }
 
@@ -25,11 +19,6 @@ void Game::run() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
-            }
-            else if (event.type == sf::Event::MouseButtonPressed) {
-                overlay.handleClick(sf::Mouse::getPosition(window));
-            } else if (event.type == sf::Event::KeyPressed) {
-                overlay.handleKeyPress(event.key);
             }
             handleMouseEvent(event);
             handleKeyEvent(event);
@@ -44,7 +33,6 @@ void Game::run() {
         // Render the game here
         drawMap();
         drawMapText();
-        overlay.draw(window); // Draw the overlay
         window.display();
     }
 }
@@ -52,6 +40,7 @@ void Game::handleMouseEvent(sf::Event &event)
 {
      // Check mouse button state continuously
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
             debugPrint("Clicked at" + std::to_string(mousePosWorld.x) + std::to_string(mousePosWorld.y));
@@ -61,9 +50,10 @@ void Game::handleMouseEvent(sf::Event &event)
     }
     enableDebug();
     if (event.type == sf::Event::MouseButtonPressed) {
+        mouseOneDown = true;
         if (event.mouseButton.button == sf::Mouse::Left) {
             debugPrint("Game::handleMouseEvent: Left Mouse Button Pressed [(" + std::to_string(mousePosWindow.x) + ", " + std::to_string(mousePosWindow.y) + "),("  + std::to_string(mousePosWorld.x) + ", " + std::to_string(mousePosWorld.y) + ")]");
-
+            
             
         } else if (event.mouseButton.button == sf::Mouse::Right) {
             debugPrint("Game::handleMouseEvent: Right Mouse Button Pressed");
@@ -71,6 +61,7 @@ void Game::handleMouseEvent(sf::Event &event)
             // Handle right mouse button press
         }
     } else if (event.type == sf::Event::MouseButtonReleased) {
+        mouseOneDown = false;
         if (event.mouseButton.button == sf::Mouse::Left) {
             debugPrint("Game::handleMouseEvent: Left Mouse Button Released");
             
@@ -271,7 +262,7 @@ void Game::updateCurrentlyWallNodes()
         
     }
     
-    debugPrint("UPDATED WALLS ACCORDING TO NEIGHKKBVOURS");
+    //debugPrint("UPDATED WALLS ACCORDING TO NEIGHKKBVOURS");
     disableDebug();
 }
 void Game::update(sf::Time deltaTime)
@@ -287,6 +278,11 @@ void Game::update(sf::Time deltaTime)
         {
             drawPathAnimation();
         }
+        if (!mouseOneDown)
+        {
+            updateCurrentlyWallNodes();
+        }
+        
         
 
         // Reset the accumulated time
@@ -335,7 +331,7 @@ void Game::resetMap()
             map[i][j].parent = nullptr;
             map[i][j].setNodeDefault();
             map[i][j].updateTextString();
-            
+            currentlyWallNodesMap.clear();
 
         }
     }

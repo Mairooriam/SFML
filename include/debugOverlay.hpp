@@ -23,7 +23,7 @@ public:
 
 public:
     // Constructor with window size and grid configuration
-    DebugOverlay(const sf::Vector2f& size, const GridConfig& config);
+    DebugOverlay(const GridConfig& config);
     
     // Core functionality
     void draw(sf::RenderWindow& window);
