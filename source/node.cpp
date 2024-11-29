@@ -185,6 +185,22 @@ bool Node::isOfNodeType(NodeType input) const
 
 }
 
+bool Node::isVisible(int w_width, int w_height)
+{
+    std::pair<float, float> pos = this->getScreenSpacePosition();
+    float nodeWidth = this->Sprite.getGlobalBounds().width;  // Assuming you have a method to get the node's width
+    float nodeHeight = this->Sprite.getGlobalBounds().height; // Assuming you have a method to get the node's height
+
+    // Check if any part of the node is within the visible screen area
+    if (pos.first + nodeWidth >= 0 && pos.first <= w_width &&
+        pos.second + nodeHeight >= 0 && pos.second <= w_height)
+    {
+        return true;
+    }
+    
+    return false;
+}
+
 std::string Node::toString() const
 {
     return "Node: (" + std::to_string(position.x) + ", " + std::to_string(position.y) + ")";

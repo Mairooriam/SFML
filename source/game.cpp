@@ -1,33 +1,42 @@
 #include "game.hpp"
 
 bool Game::debugEnabled = false; // Define the static member
-
-
-Game::Game() : window(sf::VideoMode(800, 600), "SFML Game"),
+int WINDOW_WIDTH = 800;
+int WINDOW_HEIGHT = 600;
+Game::Game() : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Game"),
     worldScale(std::make_shared<int>(128))
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(5);
+    this->initMap(100);
     //this->updateMapScale();
     this->populateNodeNeighbours();
     
 }
 
 void Game::run() {
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-            handleMouseEvent(event);
-            handleKeyEvent(event);
+    sf::Clock clock;
+    sf::Time timeSinceLastUpdate = sf::Time::Zero;
+    const sf::Time TimePerFrame = sf::seconds(1.f / 60.f); // 60Hz
 
+    while (window.isOpen()) {
+        sf::Time elapsedTime = clock.restart();
+        timeSinceLastUpdate += elapsedTime;
+
+        while (timeSinceLastUpdate > TimePerFrame) {
+            timeSinceLastUpdate -= TimePerFrame;
+
+            sf::Event event;
+            while (window.pollEvent(event)) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                }
+                handleMouseEvent(event);
+                handleKeyEvent(event);
+            }
+
+            // Update game logic here
+            update(TimePerFrame);
         }
-       
-        // Update game logic here
-        // For example, you can call a method to update the game state
-        update(sf::seconds(1.f / 60.f));
 
         window.clear();
         // Render the game here
@@ -402,13 +411,18 @@ void Game::populateNodeNeighbours()
     }
 }
 void Game::drawMap() {
+    int drawingCounter = 0;
     for (size_t i = 0; i < map.size(); ++i) { // Use size() to get the number of rows
         for (size_t j = 0; j < map[i].size(); ++j) { // Use size() to get the number of columns
             // Assuming Node has a draw method that takes a window reference
-            map[i][j].draw(window);
+            if(map[i][j].isVisible(WINDOW_WIDTH,WINDOW_HEIGHT)){
+                map[i][j].draw(window);
+                drawingCounter ++;
+            }
         }
     }
 
+    debugPrint("Game::drawMap: drawed:" + std::to_string(drawingCounter) + " nodes");
     
     //std::cout << "DRAWING MAP\n" << "map size: " << map.size() << "\n" ;
 }

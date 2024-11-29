@@ -59,6 +59,7 @@ public:
     void draw(sf::RenderWindow& window);
     void drawText(sf::RenderWindow& window);
     bool isOfNodeType(NodeType input) const;
+    bool isVisible(int w_width, int w_height);
     int getNeighboursNodeType() const;
     NodeType nodeType;
     std::string toString() const;
