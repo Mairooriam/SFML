@@ -47,7 +47,20 @@ void Game::handleMouseEvent(sf::Event &event)
             // Use getNodePointer to get a pointer to the Node and add it to the map
             this->addNodeToCurrentlyWallNodesMap(map[mousePosWorld.x][mousePosWorld.y].getNodePointer());
 
-    }
+    } 
+
+    if (event.type == sf::Event::MouseWheelMoved){
+            debugPrint("Game::handleMouseEvent: scrolled");
+            if (event.mouseWheel.delta <= 0)
+            {
+                *worldScale -= 5;
+            }else{
+                *worldScale += 5;
+            }
+            
+            
+            updateMapScale();
+        }  
     enableDebug();
     if (event.type == sf::Event::MouseButtonPressed) {
         mouseOneDown = true;
@@ -59,6 +72,11 @@ void Game::handleMouseEvent(sf::Event &event)
             debugPrint("Game::handleMouseEvent: Right Mouse Button Pressed");
             
             // Handle right mouse button press
+        }
+        else if (event.mouseButton.button == sf::Mouse::Middle){
+            debugPrint("Game::handleMouseEvent: middlemouse pressed");
+            mousePosTemp.x = event.mouseButton.x;
+            mousePosTemp.y = event.mouseButton.y;
         }
     } else if (event.type == sf::Event::MouseButtonReleased) {
         mouseOneDown = false;
@@ -74,6 +92,18 @@ void Game::handleMouseEvent(sf::Event &event)
             this->printCurrentlyWallNodesMap();
             this->updateCurrentlyWallNodes();
             // Handle right mouse button release
+        }
+        else if (event.mouseButton.button == sf::Mouse::Middle){
+            debugPrint("Game::handleMouseEvent: middlemouse released");
+            sf::Vector2f newPositon(event.mouseButton.x, event.mouseButton.y);
+            debugPrint("old pos:" + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
+            debugPrint("new pos:" + std::to_string(newPositon.x) + std::to_string(newPositon.y));
+            mousePosTemp = mousePosTemp - newPositon;
+            debugPrint("calculated delta: " + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
+
+            *mapOffsetX -= mousePosTemp.x;
+            *mapOffsetY -= mousePosTemp.y;
+            updateMapOffset();
         }
     disableDebug();
     } else if (event.type == sf::Event::MouseMoved) {
@@ -322,7 +352,8 @@ void Game::resetMap()
 {
     startNode = nullptr;
     endNode = nullptr;
-    
+    *mapOffsetX = 0;
+    *mapOffsetY = 0;
     for (size_t i = 0; i < map.size(); ++i) { 
         for (size_t j = 0; j < map[i].size(); ++j) {
             map[i][j].gCost = INFINITY;
@@ -332,9 +363,12 @@ void Game::resetMap()
             map[i][j].setNodeDefault();
             map[i][j].updateTextString();
             currentlyWallNodesMap.clear();
+            
 
         }
     }
+    updateMapScale();
+    updateMapOffset();
 }
 void Game::initMap(size_t mapSize)
 {
