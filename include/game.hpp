@@ -40,6 +40,9 @@ private:
     sf::Vector2i mousePosWorld;
     std::shared_ptr<int> worldScale; // Use shared_ptr for worldScale
     bool mouseOneDown = false;
+    bool isMiddleMousePressed = false;
+    sf::Vector2f initialMousePos;
+    unsigned int drawCallCount = 0;
     sf::Vector2f mousePosTemp;
     void handleMouseEvent(sf::Event& event);
     void handleKeyEvent(sf::Event &event);

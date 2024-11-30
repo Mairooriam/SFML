@@ -7,7 +7,7 @@ Game::Game() : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Game"),
     worldScale(std::make_shared<int>(128))
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(100);
+    this->initMap(10);
     //this->updateMapScale();
     this->populateNodeNeighbours();
     
@@ -52,11 +52,36 @@ void Game::handleMouseEvent(sf::Event &event)
             
             map[mousePosWorld.x][mousePosWorld.y].printNeighbours();
             map[mousePosWorld.x][mousePosWorld.y].setNodeWall();
-            debugPrint("Clicked at" + std::to_string(mousePosWorld.x) + std::to_string(mousePosWorld.y));
+            //debugPrint("Clicked at" + std::to_string(mousePosWorld.x) + std::to_string(mousePosWorld.y));
             // Use getNodePointer to get a pointer to the Node and add it to the map
             this->addNodeToCurrentlyWallNodesMap(map[mousePosWorld.x][mousePosWorld.y].getNodePointer());
 
-    } 
+    }else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle))
+    {
+        if (!isMiddleMousePressed) {
+            // Middle mouse button pressed for the first time
+            mousePosTemp = sf::Vector2f(mousePosWindow.x, mousePosWindow.y);
+            isMiddleMousePressed = true;
+        } else {
+            // Middle mouse button is held down
+            sf::Vector2f newPositon(mousePosWindow.x, mousePosWindow.y);
+            debugPrint("old pos:" + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
+            debugPrint("new pos:" + std::to_string(newPositon.x) + std::to_string(newPositon.y));
+            
+            sf::Vector2f delta = newPositon - mousePosTemp;
+            debugPrint("calculated delta: " + std::to_string(delta.x) + std::to_string(delta.y));
+
+            *mapOffsetX += delta.x; // Move in the x direction based on delta
+            *mapOffsetY += delta.y; // Move in the y direction based on delta
+
+            mousePosTemp = newPositon; // Update the temporary mouse position
+            updateMapOffset();
+        }
+    } else {
+        // Reset the flag when the middle mouse button is released
+        isMiddleMousePressed = false;
+    }
+     
 
     if (event.type == sf::Event::MouseWheelMoved){
             debugPrint("Game::handleMouseEvent: scrolled");
@@ -84,8 +109,7 @@ void Game::handleMouseEvent(sf::Event &event)
         }
         else if (event.mouseButton.button == sf::Mouse::Middle){
             debugPrint("Game::handleMouseEvent: middlemouse pressed");
-            mousePosTemp.x = event.mouseButton.x;
-            mousePosTemp.y = event.mouseButton.y;
+            //middleMouseDown = true;
         }
     } else if (event.type == sf::Event::MouseButtonReleased) {
         mouseOneDown = false;
@@ -102,18 +126,19 @@ void Game::handleMouseEvent(sf::Event &event)
             this->updateCurrentlyWallNodes();
             // Handle right mouse button release
         }
-        else if (event.mouseButton.button == sf::Mouse::Middle){
-            debugPrint("Game::handleMouseEvent: middlemouse released");
-            sf::Vector2f newPositon(event.mouseButton.x, event.mouseButton.y);
-            debugPrint("old pos:" + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
-            debugPrint("new pos:" + std::to_string(newPositon.x) + std::to_string(newPositon.y));
-            mousePosTemp = mousePosTemp - newPositon;
-            debugPrint("calculated delta: " + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
+        // else if (event.mouseButton.button == sf::Mouse::Middle){
+        //     debugPrint("Game::handleMouseEvent: middlemouse released");
+        //     middleMouseDown = false;
+        //     sf::Vector2f newPositon(event.mouseButton.x, event.mouseButton.y);
+        //     debugPrint("old pos:" + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
+        //     debugPrint("new pos:" + std::to_string(newPositon.x) + std::to_string(newPositon.y));
+        //     mousePosTemp = mousePosTemp - newPositon;
+        //     debugPrint("calculated delta: " + std::to_string(mousePosTemp.x) + std::to_string(mousePosTemp.y));
 
-            *mapOffsetX -= mousePosTemp.x;
-            *mapOffsetY -= mousePosTemp.y;
-            updateMapOffset();
-        }
+        //     *mapOffsetX -= mousePosTemp.x;
+        //     *mapOffsetY -= mousePosTemp.y;
+        //     updateMapOffset();
+        // }
     disableDebug();
     } else if (event.type == sf::Event::MouseMoved) {
         updateMousePos(event.mouseMove.x,event.mouseMove.y);
@@ -421,8 +446,9 @@ void Game::drawMap() {
             }
         }
     }
-
-    debugPrint("Game::drawMap: drawed:" + std::to_string(drawingCounter) + " nodes");
+    drawCallCount ++;
+    //debugPrint("Game::drawMap: drawed:" + std::to_string(drawingCounter) + " nodes. DrawCallCount" + std::to_string(drawCallCount));
+    
     
     //std::cout << "DRAWING MAP\n" << "map size: " << map.size() << "\n" ;
 }
