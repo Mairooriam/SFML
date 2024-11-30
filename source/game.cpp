@@ -7,7 +7,7 @@ Game::Game() : window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML Game"),
     worldScale(std::make_shared<int>(128))
     {
     // TODO: add calc into initmap to size/16 to get multiplier to scale sprite accordingly
-    this->initMap(10);
+    this->initMap(25);
     //this->updateMapScale();
     this->populateNodeNeighbours();
     
@@ -248,7 +248,7 @@ void Game::handleKeyEvent(sf::Event &event)
                     //pathfinder.findPathOneStep();
                     
                     
-                    path = pathfinder.findPathOneStep(false);
+                    path = pathfinder.findPathOneStep(true);
                     if (path != std::vector<Node*>()){
                         animationON = true;
                     }
@@ -334,9 +334,9 @@ void Game::update(sf::Time deltaTime)
 {
     //disableDebug();
     accumulatedTime += deltaTime;
-    debugPrint("Game::update: accmulated" + std::to_string(accumulatedTime.asMilliseconds()) + "ms");
     //debugPrint("Game::update: accmulated" + std::to_string(accumulatedTime.asMilliseconds()) + "ms");
-    debugPrint("Game::update: deltatime" + std::to_string(deltaTime.asMilliseconds()) + "ms");
+    //debugPrint("Game::update: accmulated" + std::to_string(accumulatedTime.asMilliseconds()) + "ms");
+    //debugPrint("Game::update: deltatime" + std::to_string(deltaTime.asMilliseconds()) + "ms");
     // Check if one second has passed
     if (accumulatedTime >= sf::seconds(0.1f)) {
         //Perform actions that should run every second
