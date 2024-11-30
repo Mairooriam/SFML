@@ -114,6 +114,7 @@ void Game::handleMouseEvent(sf::Event &event)
     } else if (event.type == sf::Event::MouseButtonReleased) {
         mouseOneDown = false;
         if (event.mouseButton.button == sf::Mouse::Left) {
+            updateCurrentlyWallNodes();
             debugPrint("Game::handleMouseEvent: Left Mouse Button Released");
             
             // Handle left mouse button release1
@@ -247,7 +248,7 @@ void Game::handleKeyEvent(sf::Event &event)
                     //pathfinder.findPathOneStep();
                     
                     
-                    path = pathfinder.findPathOneStep(true);
+                    path = pathfinder.findPathOneStep(false);
                     if (path != std::vector<Node*>()){
                         animationON = true;
                     }
@@ -333,24 +334,21 @@ void Game::update(sf::Time deltaTime)
 {
     //disableDebug();
     accumulatedTime += deltaTime;
+    debugPrint("Game::update: accmulated" + std::to_string(accumulatedTime.asMilliseconds()) + "ms");
     //debugPrint("Game::update: accmulated" + std::to_string(accumulatedTime.asMilliseconds()) + "ms");
-    //debugPrint("Game::update: deltatime" + std::to_string(deltaTime.asMilliseconds()) + "ms");
+    debugPrint("Game::update: deltatime" + std::to_string(deltaTime.asMilliseconds()) + "ms");
     // Check if one second has passed
-    if (accumulatedTime >= sf::seconds(1.f)) {
-        // Perform actions that should run every second
+    if (accumulatedTime >= sf::seconds(0.1f)) {
+        //Perform actions that should run every second
         if (animationON)
         {
             drawPathAnimation();
-        }
-        if (!mouseOneDown)
-        {
-            updateCurrentlyWallNodes();
         }
         
         
 
         // Reset the accumulated time
-        accumulatedTime -= sf::seconds(1.f);
+        accumulatedTime = sf::seconds(0.0f);
     }
     
 }
@@ -471,7 +469,6 @@ void Game::drawPathStep(Node* step)
 void Game::drawPathAnimation()
 {
     enableDebug();
-    
     debugPrint("Game::drawPathAnimation : COUNTER: " + std::to_string(pathAnimationCounter) + "Path Size" + std::to_string(path.size()));
 
         if (pathAnimationCounter <= path.size() & path.size() > 0){
@@ -485,6 +482,9 @@ void Game::drawPathAnimation()
             debugPrint("Game:DrawPathAnimation: Animation done setting animation off");
             animationON = false;
             pathAnimationCounter = 0;
+            for (size_t i = 0; i < path.size(); ++i) {
+                path[i]->setColor(sf::Color::Magenta);
+            }        
         }
    
 }
